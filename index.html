@@ -78,7 +78,7 @@
 <header>
   <div>
     <h1>Orders Dashboard</h1>
-    <div class="meta">Snapshot: <span id="snapshot"></span> · Source: <span id="accountList">multiple Gmail accounts</span> (last 30 days)</div>
+    <div class="meta">Snapshot: <span id="snapshot"></span> · Source: <span id="accountList">darrenustaris · wdcardshop</span> (last 30 days)</div>
   </div>
   <div class="meta">Click a card to filter · Headers sort · Pencil/trash edits · Use Export to save edits for the daily refresh</div>
 </header>
@@ -179,88 +179,182 @@
    ======================================================================= */
 /* --- SCRAPED_START --- */
 const SCRAPED = [
-  { id:"ring-011-10490988", retailer:"Ring", item:"Ring order (details in email)", qty:null, total:null,
-    orderNum:"011-10490988", status:"Ordered", lastUpdate:"2026-04-21", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+  // ===== WDCARDSHOP — INBOUND INVENTORY ORDERS =====
+
+  { id:"acd-2026-04-19", retailer:"ACD Distribution", item:"ACD Distribution order (awaiting shipment)",
+    qty:null, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-19", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"Order placed Apr 19; tracking to follow", source:"wdcardshop@gmail.com" },
+
+  { id:"ups-1ZRW55790396623610", retailer:"ACD Distribution", item:"ACD Distribution inventory order",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-20", eta:"2026-04-20",
+    tracking:"1ZRW55790396623610", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1ZRW55790396623610",
+    stale:false, shipTo:"", notes:"Shipped Apr 14; delivered Apr 20 3:41 PM", source:"wdcardshop@gmail.com" },
+
+  { id:"ups-1Z5F23380317923534", retailer:"ACD Distribution", item:"ACD Distribution inventory order (3 packages)",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-18", eta:"2026-04-18",
+    tracking:"1Z5F23380317923534", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5F23380317923534",
+    stale:false, shipTo:"", notes:"3 packages shipped Apr 15–16; also 1Z5F23380303357753 & 1Z5F23380306299347; delivered Apr 18 9:42 AM", source:"wdcardshop@gmail.com" },
+
+  { id:"goldriverdistributors-8961", retailer:"Gold River Distributors", item:"Gold River inventory order",
+    qty:null, total:2431.58, orderNum:"8961", status:"Delivered", lastUpdate:"2026-04-17", eta:"2026-04-17",
+    tracking:"1Z5X74750344677053", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750344677053",
+    stale:false, shipTo:"", notes:"Paid $2405.20 + $26.38 on Apr 16; 2 UPS shipments (also 1Z5X74750345171463); delivered Apr 17", source:"wdcardshop@gmail.com" },
+
+  { id:"ups-1Z90V1520396148290", retailer:"ACD Distribution (West)", item:"ACD Distribution West inventory order (3 packages)",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-15", eta:"2026-04-15",
+    tracking:"1Z90V1520396148290", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z90V1520396148290",
+    stale:false, shipTo:"", notes:"3 packages shipped Apr 14; also 1Z90V1520398302510 & 1Z90V1520399961904; delivered Apr 15 10:34 AM", source:"wdcardshop@gmail.com" },
+
+  { id:"goldriverdistributors-8896", retailer:"Gold River Distributors", item:"Gold River inventory order",
+    qty:null, total:4838.00, orderNum:"8896", status:"Delivered", lastUpdate:"2026-04-15", eta:"2026-04-15",
+    tracking:"1Z5X74750344502179", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750344502179",
+    stale:false, shipTo:"", notes:"Paid $4838 on Apr 14; confirmed Apr 13–14; also 1Z5X74750343679008; delivered Apr 15", source:"wdcardshop@gmail.com" },
+
+  { id:"ups-1Z5X74750345766982", retailer:"Gold River Distributors", item:"Gold River inventory order",
+    qty:null, total:4463.16, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"1Z5X74750345766982", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750345766982",
+    stale:false, shipTo:"", notes:"Paid $4463.16 on Apr 9; UPS ship notification Apr 9, ETA Apr 10; presumed delivered", source:"wdcardshop@gmail.com" },
+
+  { id:"goldriverdistributors-8685", retailer:"Gold River Distributors", item:"Gold River inventory order",
+    qty:null, total:null, orderNum:"8685", status:"Delivered", lastUpdate:"2026-04-03", eta:"2026-04-03",
+    tracking:"1Z5X74750343016287", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750343016287",
+    stale:false, shipTo:"", notes:"Confirmed & paid ~Apr 2; delivered Apr 3", source:"wdcardshop@gmail.com" },
+
+  { id:"goldriverdistributors-8672", retailer:"Gold River Distributors", item:"Gold River inventory order",
+    qty:null, total:298.08, orderNum:"8672", status:"Delivered", lastUpdate:"2026-04-03", eta:"2026-04-03",
+    tracking:"1Z5X74750344141907", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750344141907",
+    stale:false, shipTo:"", notes:"Paid $298.08 on Apr 2; delivered Apr 3", source:"wdcardshop@gmail.com" },
+
+  { id:"theboxery-617957", retailer:"The Boxery", item:"Glenwood Packaging materials",
+    qty:null, total:null, orderNum:"617957", status:"In Transit", lastUpdate:"2026-04-13", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
+    notes:"Apr 2026 Glenwood Packaging; shipped Apr 13; no delivery confirmation", source:"wdcardshop@gmail.com" },
+
+  { id:"theboxery-613322", retailer:"The Boxery", item:"Packaging materials (Mar 2026 Order 2)",
+    qty:null, total:null, orderNum:"613322", status:"In Transit", lastUpdate:"2026-03-30", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
+    notes:"Shipped Mar 30; no delivery confirmation; likely delivered", source:"wdcardshop@gmail.com" },
+
+  { id:"theboxery-613026", retailer:"The Boxery", item:"Packaging materials (Mar 2026 SoCal)",
+    qty:null, total:null, orderNum:"613026", status:"In Transit", lastUpdate:"2026-03-27", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
+    notes:"Shipped Mar 27; no delivery confirmation; likely delivered", source:"wdcardshop@gmail.com" },
+
+  { id:"fedex-870425132207", retailer:"FedEx shipment (unknown sender)", item:"Package via FedEx",
+    qty:null, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-08", eta:"",
+    tracking:"870425132207", carrier:"FedEx",
+    trackingUrl:"https://www.fedex.com/fedextrack/?trknbr=870425132207",
+    stale:true, shipTo:"", notes:"FedEx received package Apr 8; delivery date TBD at time of email; likely delivered", source:"wdcardshop@gmail.com" },
+
+  { id:"walmart-wdcardshop-2026-04-06", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-06", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"ETA Apr 10; shipped Apr 6; card shop inventory", source:"wdcardshop@gmail.com" },
+
+  { id:"walmart-wdcardshop-2026-04-04", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-04", eta:"2026-04-09",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"ETA Apr 9; shipped Apr 4; card shop inventory", source:"wdcardshop@gmail.com" },
+
+  { id:"walmart-wdcardshop-2026-04-02", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-02", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"ETA Apr 7; shipped Apr 2; card shop inventory", source:"wdcardshop@gmail.com" },
+
+  { id:"walmart-wdcardshop-2026-04-01", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-01", eta:"2026-04-06",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"ETA Apr 6; shipped Apr 1; card shop inventory", source:"wdcardshop@gmail.com" },
+
+  { id:"premiumbandai-1000535861", retailer:"Premium Bandai", item:"ONE PIECE CARD GAME English Version 3rd Anniversary Set",
+    qty:1, total:141.25, orderNum:"1000535861", status:"Ordered", lastUpdate:"2026-03-30", eta:"2026-09-01",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
+    notes:"September 2026 delivery; paid MasterCard $120 + $10 shipping + $11.25 tax; forwarded from wdcardshop2@gmail.com", source:"wdcardshop@gmail.com" },
+
+  // ===== PERSONAL (darrenustaris) — preserved from prior run =====
+
+  { id:"ring-011-10490988", retailer:"Ring", item:"Ring order (details in email)",
+    qty:null, total:null, orderNum:"011-10490988", status:"Ordered", lastUpdate:"2026-04-21", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
 
   { id:"walmart-2026-04-15-pokemon-scarlet", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
     qty:5, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-21",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
 
   { id:"usps-9341920111411216501947", retailer:"Amazon (via USPS)", item:"Amazon package",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-20", eta:"2026-04-20",
     tracking:"9341920111411216501947", carrier:"USPS",
     trackingUrl:"https://tools.usps.com/go/TrackConfirmAction?tLabels=9341920111411216501947",
-    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Shipped from Amazon · Out for delivery Apr 20 by 3:50pm" , source:"darrenustaris@gmail.com" },
+    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Shipped from Amazon · Out for delivery Apr 20 by 3:50pm", source:"darrenustaris@gmail.com" },
 
-  { id:"usps-9400140109627774729627", retailer:"Pitney Bowes GEC (via USPS)",
-    item:"International package (often eBay/Etsy)", qty:null, total:null,
-    orderNum:"", status:"Delivered", lastUpdate:"2026-04-20", eta:"2026-04-20",
+  { id:"usps-9400140109627774729627", retailer:"Pitney Bowes GEC (via USPS)", item:"International package (often eBay/Etsy)",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-20", eta:"2026-04-20",
     tracking:"9400140109627774729627", carrier:"USPS",
     trackingUrl:"https://tools.usps.com/go/TrackConfirmAction?tLabels=9400140109627774729627",
-    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Out for delivery Apr 20 by 3:50pm · Delivered per user confirmation" , source:"darrenustaris@gmail.com" },
+    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Out for delivery Apr 20 by 3:50pm · Delivered per user confirmation", source:"darrenustaris@gmail.com" },
 
   { id:"walmart-2026-04-15-pokemon-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game",
     qty:1, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-18",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:true, notes:"" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
 
   { id:"shopify-RPL6083", retailer:"Reformed Poke Lab", item:"Pokemon Perfect Order Booster Box",
     qty:12, total:2230.00, orderNum:"RPL6083", status:"Delivered", lastUpdate:"2026-04-15", eta:"",
     tracking:"1ZC1B491YW63031983", carrier:"UPS",
     trackingUrl:"https://www.ups.com/track?tracknum=1ZC1B491YW63031983",
-    stale:false, shipTo:"Thomas Lau\n1311 Glenwood Ave\nSan Jose, CA 95125", notes:"" , source:"darrenustaris@gmail.com" },
+    stale:false, shipTo:"Thomas Lau\n1311 Glenwood Ave\nSan Jose, CA 95125", notes:"", source:"darrenustaris@gmail.com" },
 
   { id:"pokemoncenter-2026-04-14", retailer:"Pokémon Center", item:"Pokémon Center order",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-14", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
 
-  { id:"usps-9400136208235344766045", retailer:"Descartes Systems (via USPS)",
-    item:"Package via USPS", qty:null, total:null, orderNum:"", status:"Delivered",
-    lastUpdate:"2026-04-13", eta:"2026-04-13",
+  { id:"usps-9400136208235344766045", retailer:"Descartes Systems (via USPS)", item:"Package via USPS",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-13", eta:"2026-04-13",
     tracking:"9400136208235344766045", carrier:"USPS",
     trackingUrl:"https://tools.usps.com/go/TrackConfirmAction?tLabels=9400136208235344766045",
-    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Shipped from The Descartes Systems Group Inc · Expected by Apr 13" , source:"darrenustaris@gmail.com" },
+    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Shipped from The Descartes Systems Group Inc · Expected by Apr 13", source:"darrenustaris@gmail.com" },
 
   { id:"walmart-2026-04-07-pokemon-scarlet", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
     qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
 
   { id:"la28-391117453", retailer:"LA28 Olympics", item:"Olympic Ticket Order",
     qty:null, total:null, orderNum:"391117453", status:"Ordered", lastUpdate:"2026-04-07", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"Forwarded from Reyn Teranishi" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"Forwarded from Reyn Teranishi · 2028 event", source:"darrenustaris@gmail.com" },
 
-  { id:"la28-391117188", retailer:"LA28 Olympics",
-    item:"ATH15 Athletics (Track & Field) Mixed Final — Cat D ×2",
+  { id:"la28-391117188", retailer:"LA28 Olympics", item:"ATH15 Athletics (Track & Field) Mixed Final — Cat D ×2",
     qty:2, total:2232.54, orderNum:"391117188", status:"Ordered", lastUpdate:"2026-04-07", eta:"",
     tracking:"", carrier:"", trackingUrl:"",
-    stale:false, notes:"Sat 07.22.2028 · LA Memorial Coliseum · Digital delivery · Paid by Jamie Mangan (VISA)" , source:"darrenustaris@gmail.com" },
+    stale:false, shipTo:"", notes:"Sat 07.22.2028 · LA Memorial Coliseum · Digital delivery · Paid by Jamie Mangan (VISA)", source:"darrenustaris@gmail.com" },
 
   { id:"walmart-2026-04-06-pokemon-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items",
     qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-06", eta:"",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
 
-  { id:"usps-9261290326130777608955", retailer:"USPS shipment (unknown)",
-    item:"Package via USPS", qty:null, total:null, orderNum:"", status:"Delivered",
-    lastUpdate:"2026-04-03", eta:"2026-04-03",
+  { id:"usps-9261290326130777608955", retailer:"USPS shipment (unknown)", item:"Package via USPS",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-03", eta:"2026-04-03",
     tracking:"9261290326130777608955", carrier:"USPS",
     trackingUrl:"https://tools.usps.com/go/TrackConfirmAction?tLabels=9261290326130777608955",
-    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Out for delivery Apr 3 by 3:35pm" , source:"darrenustaris@gmail.com" },
+    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Out for delivery Apr 3 by 3:35pm", source:"darrenustaris@gmail.com" },
 
   { id:"dsg-2026-03-31", retailer:"Dick's Sporting Goods", item:"Package delivered",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-31", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
 
   { id:"tcgplayer-jirachi-xy67a", retailer:"TCGplayer", item:"Jirachi - XY67a",
     qty:1, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-03-26", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, notes:"Paid MASTERCARD" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"", notes:"Paid MASTERCARD", source:"darrenustaris@gmail.com" },
 
   { id:"pokemoncenter-2026-03-25", retailer:"Pokémon Center", item:"Pokémon Center order (shipped)",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-25", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
-
-  { id:"walmart-2026-03-24-crystal-geyser", retailer:"Walmart", item:"Crystal Geyser Alpine + 13 other items",
-    qty:14, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-24", eta:"",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" }
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" }
 ];
 /* --- SCRAPED_END --- */
 
