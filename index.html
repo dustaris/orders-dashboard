@@ -78,7 +78,7 @@
 <header>
   <div>
     <h1>Orders Dashboard</h1>
-    <div class="meta">Snapshot: <span id="snapshot"></span> · Source: <span id="accountList">darrenustaris · darrenustaris2 · darrenustaris3 · wd.cardshop01 · wdcardshop</span> (last 30 days)</div>
+    <div class="meta">Snapshot: <span id="snapshot"></span> · Source: <span id="accountList">darrenustaris · darrenustaris2 · darrenustaris3 · wd.cardshop01 · wdcardshop · wdcardshop2 · wdcardshop3 · wdcardshop5</span> (last 30 days)</div>
   </div>
   <div class="meta">Click a card to filter · Headers sort · Pencil/trash edits · Use Export to save edits for the daily refresh</div>
 </header>
@@ -290,9 +290,11 @@ const SCRAPED = [
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"Shipped Apr 16; ETA Apr 21 (today)", source:"darrenustaris3@gmail.com" },
 
 
-  { id:"walmart-2026-04-15-pokemon-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game",
-    qty:1, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-18",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"ETA Apr 18 passed; no delivery confirmation received", source:"darrenustaris@gmail.com" },
+  { id:"walmart-2026-04-15-pokemon-tcg", retailer:"Walmart", item:"Pokemon TCG Phantasmal Flames Elite Trainer Box",
+    qty:1, total:null, orderNum:"2000147-13448180", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-18",
+    tracking:"1ZHE53840330173603", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1ZHE53840330173603",
+    stale:true, shipTo:"", notes:"Shipped Apr 15 via UPS; ETA Apr 18 passed; no delivery confirmation received", source:"darrenustaris@gmail.com" },
 
   { id:"shopify-RPL6083", retailer:"Reformed Poke Lab", item:"Pokemon Perfect Order Booster Box",
     qty:12, total:2230.00, orderNum:"RPL6083", status:"Delivered", lastUpdate:"2026-04-15", eta:"",
@@ -357,7 +359,63 @@ const SCRAPED = [
   { id:"walmart-wdcardshop01-2026-04-14-canceled", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items (Canceled)",
     qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-14", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
-    notes:"CANCELED Apr 14 — due to policy flag; not charged", source:"wd.cardshop01@gmail.com" }
+    notes:"CANCELED Apr 14 — due to policy flag; not charged", source:"wd.cardshop01@gmail.com" },
+
+  // ===== wdcardshop5 — NEW ENTRIES =====
+
+  { id:"walmart-wdcardshop5-2026-04-13-canceled", retailer:"Walmart",
+    item:"Pokemon TCG Phantasmal Flames Booster Bundle (Canceled)",
+    qty:1, total:null, orderNum:"2000143-05172119", status:"Ordered", lastUpdate:"2026-04-13", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
+    notes:"CANCELED Apr 13 — policy flag; Order# 2000143-05172119; not charged", source:"wdcardshop5@gmail.com" },
+
+  // ===== wdcardshop2 — NEW ENTRIES =====
+
+  { id:"walmart-wdcardshop2-2026-04-15-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Shipped Apr 15; ETA Apr 21; card shop inventory", source:"wdcardshop2@gmail.com" },
+
+  { id:"walmart-wdcardshop2-2026-04-canceled-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items (Canceled)",
+    qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-15", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
+    notes:"CANCELED — not charged; card shop inventory", source:"wdcardshop2@gmail.com" },
+
+  // ===== wdcardshop3 — NEW ENTRIES =====
+
+  { id:"walmart-wdcardshop3-2026-04-15-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Shipped Apr 15; ETA Apr 21; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  { id:"walmart-wdcardshop3-2026-04-canceled-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items (Canceled)",
+    qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-15", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
+    notes:"CANCELED — policy flag; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  { id:"walmart-wdcardshop3-2026-04-canceled-tcg-issue", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items (Canceled)",
+    qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-15", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
+    notes:"CANCELED — unexpected issue; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  { id:"walmart-wdcardshop3-2026-04-canceled-tcg-qty", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items (Canceled)",
+    qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-15", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
+    notes:"CANCELED — exceeded quantity limit; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  // ===== darrenustaris — NEW ENTRIES =====
+
+  { id:"walmart-darrenustaris-2026-04-crystal-geyser", retailer:"Walmart",
+    item:"Crystal Geyser Alpine Spring Water + 13 other items",
+    qty:14, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Grocery delivery; delayed and rescheduled; delivered Apr 2026", source:"darrenustaris@gmail.com" }
 ];
 /* --- SCRAPED_END --- */
 
