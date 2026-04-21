@@ -78,7 +78,7 @@
 <header>
   <div>
     <h1>Orders Dashboard</h1>
-    <div class="meta">Snapshot: <span id="snapshot"></span> · Source: <span id="accountList">darrenustaris · darrenustaris3 · wdcardshop</span> (last 30 days)</div>
+    <div class="meta">Snapshot: <span id="snapshot"></span> · Source: <span id="accountList">darrenustaris · darrenustaris3 · wd.cardshop01 · wdcardshop</span> (last 30 days)</div>
   </div>
   <div class="meta">Click a card to filter · Headers sort · Pencil/trash edits · Use Export to save edits for the daily refresh</div>
 </header>
@@ -276,7 +276,7 @@ const SCRAPED = [
 
   { id:"premiumbandai-1000535861", retailer:"Premium Bandai", item:"ONE PIECE CARD GAME English Version 3rd Anniversary Set",
     qty:1, total:141.25, orderNum:"1000535861", status:"Ordered", lastUpdate:"2026-03-30", eta:"2026-09-01",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
     notes:"September 2026 delivery; paid MasterCard $120 + $10 shipping + $11.25 tax; forwarded from wdcardshop2@gmail.com", source:"wdcardshop@gmail.com" },
 
   // ===== PERSONAL (darrenustaris) — preserved from prior run =====
@@ -342,8 +342,15 @@ const SCRAPED = [
 
   { id:"walmart-2026-04-02-canceled-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items (Canceled)",
     qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-02", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
-    notes:"CANCELED Apr 2 — not charged; delivery cancellation", source:"darrenustaris3@gmail.com" }
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
+    notes:"CANCELED Apr 2 — not charged; delivery cancellation", source:"darrenustaris3@gmail.com" },
+
+  // ===== wd.cardshop01 — NEW ENTRIES =====
+
+  { id:"walmart-wdcardshop01-2026-04-14-canceled", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items (Canceled)",
+    qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-14", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
+    notes:"CANCELED Apr 14 — due to policy flag; not charged", source:"wd.cardshop01@gmail.com" }
 ];
 /* --- SCRAPED_END --- */
 
@@ -359,6 +366,7 @@ const STORAGE_KEY = "ordersDashboard.edits.v1";
 /* --- SEED_START --- */
 const SEED_EDITS = { overrides:{}, additions:[], deletions:["tcgplayer-jirachi-xy67a","la28-391117188","la28-391117453","ring-011-10490988","usps-9341920111411216501947","usps-9400140109627774729627"] };
 /* --- SEED_END --- */
+
 const EDITS = loadEdits();
 
 function loadEdits(){
