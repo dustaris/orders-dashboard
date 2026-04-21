@@ -8,7 +8,7 @@
   :root{
     --bg:#0f1115; --panel:#161a22; --panel-2:#1c2230; --text:#e8ecf3; --muted:#8a93a6;
     --accent:#7c9cff; --ok:#2ecc71; --warn:#f1c40f; --transit:#5dade2; --ordered:#b48cff;
-    --danger:#e74c3c; --line:#262c3a;
+    --danger:#e74c3c; --cancelled:#e67e22; --line:#262c3a;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
@@ -16,7 +16,7 @@
   header h1{margin:0;font-size:20px;font-weight:600;letter-spacing:.2px}
   header .meta{color:var(--muted);font-size:12px}
   .wrap{padding:20px 28px}
-  .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+  .cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:18px}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;transition:border-color .15s}
   .card:hover{border-color:#3a4763}
   .card.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(124,156,255,.18) inset}
@@ -26,6 +26,7 @@
   .card.ordered .num{color:var(--ordered)}
   .card.transit .num{color:var(--transit)}
   .card.delivered .num{color:var(--ok)}
+  .card.cancelled .num{color:var(--cancelled)}
   .toolbar{display:flex;gap:10px;align-items:center;margin:10px 0 14px;flex-wrap:wrap}
   .toolbar input, .toolbar select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;min-width:220px}
   .toolbar .spacer{flex:1}
@@ -45,6 +46,7 @@
   .pill.ordered{background:rgba(180,140,255,.15);color:var(--ordered)}
   .pill.transit{background:rgba(93,173,226,.15);color:var(--transit)}
   .pill.delivered{background:rgba(46,204,113,.15);color:var(--ok)}
+  .pill.cancelled{background:rgba(230,126,34,.15);color:var(--cancelled)}
   .pill.stale{background:rgba(241,196,15,.15);color:var(--warn)}
   .pill.edited{background:rgba(124,156,255,.15);color:var(--accent)}
   .pill.custom{background:rgba(231,76,60,.15);color:#ffb0a8}
@@ -71,6 +73,7 @@
   .toast{position:fixed;bottom:20px;right:20px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;opacity:0;transform:translateY(6px);transition:all .18s;z-index:60}
   .toast.show{opacity:1;transform:none}
   .pill.src{background:rgba(255,255,255,.07);color:var(--muted);font-size:10px;letter-spacing:.1px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+  @media (max-width:900px){.cards{grid-template-columns:repeat(3,1fr)}}
   @media (max-width:760px){.cards{grid-template-columns:repeat(2,1fr)} .two{grid-template-columns:1fr}}
 </style>
 </head>
@@ -89,6 +92,7 @@
     <div class="card ordered" data-filter="Ordered"><div class="label">Ordered</div><div class="num" id="c-ordered">0</div></div>
     <div class="card transit" data-filter="In Transit"><div class="label">In Transit</div><div class="num" id="c-transit">0</div></div>
     <div class="card delivered" data-filter="Delivered"><div class="label">Delivered</div><div class="num" id="c-delivered">0</div></div>
+    <div class="card cancelled" data-filter="Cancelled"><div class="label">Cancelled</div><div class="num" id="c-cancelled">0</div></div>
   </div>
 
   <div class="toolbar">
@@ -150,6 +154,7 @@
             <option>Ordered</option>
             <option>In Transit</option>
             <option>Delivered</option>
+            <option>Cancelled</option>
           </select>
         </label>
         <label>Last update<input id="f-lastUpdate" type="date" /></label>
@@ -342,10 +347,10 @@ const SCRAPED = [
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
     notes:"Package arrived Mar 25; card shop inventory", source:"darrenustaris3@gmail.com" },
 
-  { id:"walmart-2026-04-02-canceled-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items (Canceled)",
-    qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-02", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
-    notes:"CANCELED Apr 2 — not charged; delivery cancellation", source:"darrenustaris3@gmail.com" },
+  { id:"walmart-2026-04-02-canceled-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-02", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Cancelled Apr 2 — not charged; delivery cancellation", source:"darrenustaris3@gmail.com" },
 
   // ===== darrenustaris2 — NEW ENTRIES =====
 
@@ -356,18 +361,18 @@ const SCRAPED = [
 
   // ===== wd.cardshop01 — NEW ENTRIES =====
 
-  { id:"walmart-wdcardshop01-2026-04-14-canceled", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items (Canceled)",
-    qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-14", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
-    notes:"CANCELED Apr 14 — due to policy flag; not charged", source:"wd.cardshop01@gmail.com" },
+  { id:"walmart-wdcardshop01-2026-04-14-canceled", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-14", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Cancelled Apr 14 — policy flag; not charged", source:"wd.cardshop01@gmail.com" },
 
   // ===== wdcardshop5 — NEW ENTRIES =====
 
   { id:"walmart-wdcardshop5-2026-04-13-canceled", retailer:"Walmart",
-    item:"Pokemon TCG Phantasmal Flames Booster Bundle (Canceled)",
-    qty:1, total:null, orderNum:"2000143-05172119", status:"Ordered", lastUpdate:"2026-04-13", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
-    notes:"CANCELED Apr 13 — policy flag; Order# 2000143-05172119; not charged", source:"wdcardshop5@gmail.com" },
+    item:"Pokemon TCG Phantasmal Flames Booster Bundle",
+    qty:1, total:null, orderNum:"2000143-05172119", status:"Cancelled", lastUpdate:"2026-04-13", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Cancelled Apr 13 — policy flag; Order# 2000143-05172119; not charged", source:"wdcardshop5@gmail.com" },
 
   // ===== wdcardshop2 — NEW ENTRIES =====
 
@@ -378,10 +383,10 @@ const SCRAPED = [
     notes:"Shipped Apr 15; ETA Apr 21; card shop inventory", source:"wdcardshop2@gmail.com" },
 
   { id:"walmart-wdcardshop2-2026-04-canceled-tcg", retailer:"Walmart",
-    item:"Pokemon Trading Card Game + 4 other items (Canceled)",
-    qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-15", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
-    notes:"CANCELED — not charged; card shop inventory", source:"wdcardshop2@gmail.com" },
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-15", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Cancelled — not charged; card shop inventory", source:"wdcardshop2@gmail.com" },
 
   // ===== wdcardshop3 — NEW ENTRIES =====
 
@@ -392,22 +397,22 @@ const SCRAPED = [
     notes:"Shipped Apr 15; ETA Apr 21; card shop inventory", source:"wdcardshop3@gmail.com" },
 
   { id:"walmart-wdcardshop3-2026-04-canceled-scarlet", retailer:"Walmart",
-    item:"Pokemon Scarlet & Violet + 4 other items (Canceled)",
-    qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-15", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
-    notes:"CANCELED — policy flag; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-15", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Cancelled — policy flag; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
 
   { id:"walmart-wdcardshop3-2026-04-canceled-tcg-issue", retailer:"Walmart",
-    item:"Pokemon Trading Card Game + 4 other items (Canceled)",
-    qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-15", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
-    notes:"CANCELED — unexpected issue; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-15", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Cancelled — unexpected issue; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
 
   { id:"walmart-wdcardshop3-2026-04-canceled-tcg-qty", retailer:"Walmart",
-    item:"Pokemon Trading Card Game + 4 other items (Canceled)",
-    qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-15", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
-    notes:"CANCELED — exceeded quantity limit; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-15", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Cancelled — exceeded quantity limit; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
 
   // ===== darrenustaris — NEW ENTRIES =====
 
@@ -494,12 +499,13 @@ let editingId = null; // if set, editing an existing scraped or custom order
 let editingIsCustom = false;
 
 function counts(list){
-  const c = { all: list.length, Ordered:0, 'In Transit':0, Delivered:0 };
-  for (const o of list) c[o.status]++;
+  const c = { all: list.length, Ordered:0, 'In Transit':0, Delivered:0, Cancelled:0 };
+  for (const o of list) { if(c[o.status]!==undefined) c[o.status]++; }
   document.getElementById('c-total').textContent = c.all;
   document.getElementById('c-ordered').textContent = c.Ordered;
   document.getElementById('c-transit').textContent = c['In Transit'];
   document.getElementById('c-delivered').textContent = c.Delivered;
+  document.getElementById('c-cancelled').textContent = c.Cancelled;
 }
 
 function fillRetailers(list){
@@ -525,7 +531,7 @@ function fillAccounts(list){
 }
 
 function statusPill(s, o){
-  const map = { 'Ordered':'ordered', 'In Transit':'transit', 'Delivered':'delivered' };
+  const map = { 'Ordered':'ordered', 'In Transit':'transit', 'Delivered':'delivered', 'Cancelled':'cancelled' };
   let html = `<span class="pill ${map[s]||''}">${s}</span>`;
   if (o.stale) html += ` <span class="pill stale" title="No email update in 7+ days">Stale</span>`;
   if (o._edited) html += ` <span class="pill edited" title="You edited this row">Edited</span>`;
