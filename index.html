@@ -78,7 +78,7 @@
 <header>
   <div>
     <h1>Orders Dashboard</h1>
-    <div class="meta">Snapshot: <span id="snapshot"></span> · Source: <span id="accountList">darrenustaris · wdcardshop</span> (last 30 days)</div>
+    <div class="meta">Snapshot: <span id="snapshot"></span> · Source: <span id="accountList">darrenustaris · darrenustaris3 · wdcardshop</span> (last 30 days)</div>
   </div>
   <div class="meta">Click a card to filter · Headers sort · Pencil/trash edits · Use Export to save edits for the daily refresh</div>
 </header>
@@ -286,8 +286,8 @@ const SCRAPED = [
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
 
   { id:"walmart-2026-04-15-pokemon-scarlet", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
-    qty:5, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-21",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
+    qty:5, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-16", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"Shipped Apr 16; ETA Apr 21 (today)", source:"darrenustaris3@gmail.com" },
 
   { id:"usps-9341920111411216501947", retailer:"Amazon (via USPS)", item:"Amazon package",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-20", eta:"2026-04-20",
@@ -303,7 +303,7 @@ const SCRAPED = [
 
   { id:"walmart-2026-04-15-pokemon-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game",
     qty:1, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-18",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"ETA Apr 18 passed; no delivery confirmation received", source:"darrenustaris@gmail.com" },
 
   { id:"shopify-RPL6083", retailer:"Reformed Poke Lab", item:"Pokemon Perfect Order Booster Box",
     qty:12, total:2230.00, orderNum:"RPL6083", status:"Delivered", lastUpdate:"2026-04-15", eta:"",
@@ -354,7 +354,19 @@ const SCRAPED = [
 
   { id:"pokemoncenter-2026-03-25", retailer:"Pokémon Center", item:"Pokémon Center order (shipped)",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-25", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" }
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
+
+  // ===== NEW ENTRIES — darrenustaris3 =====
+
+  { id:"walmart-2026-03-25-pokemon-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-25", eta:"",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Package arrived Mar 25; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-2026-04-02-canceled-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items (Canceled)",
+    qty:5, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-02", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
+    notes:"CANCELED Apr 2 — not charged; delivery cancellation", source:"darrenustaris3@gmail.com" }
 ];
 /* --- SCRAPED_END --- */
 
@@ -368,7 +380,7 @@ const STORAGE_KEY = "ordersDashboard.edits.v1";
 // Seeded by the daily refresh from order_edits.json (if present on disk).
 // Used only when this browser's localStorage is empty.
 /* --- SEED_START --- */
-const SEED_EDITS = { overrides:{}, additions:[], deletions:[] };
+const SEED_EDITS = { overrides:{}, additions:[], deletions:["tcgplayer-jirachi-xy67a","la28-391117188","la28-391117453","ring-011-10490988","usps-9341920111411216501947","usps-9400140109627774729627"] };
 /* --- SEED_END --- */
 const EDITS = loadEdits();
 
