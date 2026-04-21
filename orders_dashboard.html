@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Orders Dashboard</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#161a22; --panel-2:#1c2230; --text:#e8ecf3; --muted:#8a93a6;
+    --accent:#7c9cff; --ok:#2ecc71; --warn:#f1c40f; --transit:#5dade2; --ordered:#b48cff;
+    --danger:#e74c3c; --line:#262c3a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+  header{padding:24px 28px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  header h1{margin:0;font-size:20px;font-weight:600;letter-spacing:.2px}
+  header .meta{color:var(--muted);font-size:12px}
+  .wrap{padding:20px 28px}
+  .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;transition:border-color .15s}
+  .card:hover{border-color:#3a4763}
+  .card.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(124,156,255,.18) inset}
+  .card .label{color:var(--muted);font-size:12px;letter-spacing:.3px;text-transform:uppercase}
+  .card .num{font-size:28px;font-weight:700;margin-top:4px}
+  .card.total .num{color:var(--text)}
+  .card.ordered .num{color:var(--ordered)}
+  .card.transit .num{color:var(--transit)}
+  .card.delivered .num{color:var(--ok)}
+  .toolbar{display:flex;gap:10px;align-items:center;margin:10px 0 14px;flex-wrap:wrap}
+  .toolbar input, .toolbar select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;min-width:220px}
+  .toolbar .spacer{flex:1}
+  button{background:var(--panel-2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;cursor:pointer}
+  button:hover{border-color:#3a4763}
+  button.primary{background:var(--accent);color:#0f1115;border-color:transparent;font-weight:600}
+  button.primary:hover{filter:brightness(1.05)}
+  button.danger{color:var(--danger);border-color:#3a4763}
+  button.danger:hover{background:rgba(231,76,60,.12);border-color:var(--danger)}
+  button.ghost{background:transparent}
+  table{width:100%;border-collapse:separate;border-spacing:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--panel-2);color:var(--muted);font-weight:600;font-size:12px;letter-spacing:.3px;text-transform:uppercase;cursor:pointer;user-select:none;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#1a2030}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.2px}
+  .pill.ordered{background:rgba(180,140,255,.15);color:var(--ordered)}
+  .pill.transit{background:rgba(93,173,226,.15);color:var(--transit)}
+  .pill.delivered{background:rgba(46,204,113,.15);color:var(--ok)}
+  .pill.stale{background:rgba(241,196,15,.15);color:var(--warn)}
+  .pill.edited{background:rgba(124,156,255,.15);color:var(--accent)}
+  .pill.custom{background:rgba(231,76,60,.15);color:#ffb0a8}
+  .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .retailer{font-weight:600}
+  .desc{color:var(--muted)}
+  .empty{padding:40px;text-align:center;color:var(--muted)}
+  footer{padding:14px 28px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
+  .row-actions{display:flex;gap:6px;justify-content:flex-end}
+  .row-actions button{padding:4px 8px;font-size:12px}
+  /* Modal */
+  .overlay{position:fixed;inset:0;background:rgba(5,8,14,.65);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+  .overlay.show{display:flex}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:12px;width:100%;max-width:560px;max-height:92vh;overflow:auto}
+  .modal h3{margin:0;padding:16px 18px;border-bottom:1px solid var(--line);font-size:16px}
+  .modal .body{padding:16px 18px;display:grid;gap:10px}
+  .modal .body label{display:grid;gap:4px;font-size:12px;color:var(--muted)}
+  .modal .body input,.modal .body select,.modal .body textarea{background:var(--panel-2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit}
+  .modal .body textarea{resize:vertical;min-height:60px}
+  .modal .foot{display:flex;gap:8px;justify-content:flex-end;padding:12px 18px;border-top:1px solid var(--line)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .toast{position:fixed;bottom:20px;right:20px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;opacity:0;transform:translateY(6px);transition:all .18s;z-index:60}
+  .toast.show{opacity:1;transform:none}
+  .pill.src{background:rgba(255,255,255,.07);color:var(--muted);font-size:10px;letter-spacing:.1px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+  @media (max-width:760px){.cards{grid-template-columns:repeat(2,1fr)} .two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Orders Dashboard</h1>
+    <div class="meta">Snapshot: <span id="snapshot"></span> · Source: <span id="accountList">multiple Gmail accounts</span> (last 30 days)</div>
+  </div>
+  <div class="meta">Click a card to filter · Headers sort · Pencil/trash edits · Use Export to save edits for the daily refresh</div>
+</header>
+
+<div class="wrap">
+  <div class="cards">
+    <div class="card total active" data-filter="all"><div class="label">Total Orders</div><div class="num" id="c-total">0</div></div>
+    <div class="card ordered" data-filter="Ordered"><div class="label">Ordered</div><div class="num" id="c-ordered">0</div></div>
+    <div class="card transit" data-filter="In Transit"><div class="label">In Transit</div><div class="num" id="c-transit">0</div></div>
+    <div class="card delivered" data-filter="Delivered"><div class="label">Delivered</div><div class="num" id="c-delivered">0</div></div>
+  </div>
+
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Search retailer, item, order #, tracking, notes…" />
+    <select id="retailer"><option value="">All retailers</option></select>
+    <select id="accountSel"><option value="">All accounts</option></select>
+    <div class="spacer"></div>
+    <button id="addBtn" class="primary">+ Add order</button>
+    <button id="exportBtn" title="Save your edits to a JSON file. The daily refresh reads this file.">Export edits</button>
+    <button id="importBtn" title="Load an edits JSON file">Import</button>
+    <input id="importFile" type="file" accept="application/json" style="display:none" />
+    <button id="resetBtn" class="ghost" title="Clear ALL your edits (cannot undo)">Clear edits</button>
+  </div>
+
+  <table id="tbl">
+    <thead>
+      <tr>
+        <th data-k="retailer">Retailer</th>
+        <th data-k="source">Account</th>
+        <th data-k="item">Item(s)</th>
+        <th data-k="qty">Qty</th>
+        <th data-k="total">Total</th>
+        <th data-k="orderNum">Order #</th>
+        <th data-k="status">Status</th>
+        <th data-k="lastUpdate">Last Update</th>
+        <th data-k="eta">ETA</th>
+        <th data-k="tracking">Tracking</th>
+        <th data-k="shipTo">Deliver to</th>
+        <th data-k="notes">Notes</th>
+        <th style="text-align:right">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div id="empty" class="empty" style="display:none">No orders match.</div>
+</div>
+
+<footer>
+  Status inferred from email signals. <span class="pill stale">Stale</span> = no email update in 7+ days (may already be delivered). <span class="pill edited">Edited</span> = you modified this row. <span class="pill custom">Custom</span> = you added this row manually.
+</footer>
+
+<!-- Edit Modal -->
+<div id="overlay" class="overlay">
+  <div class="modal">
+    <h3 id="modalTitle">Edit order</h3>
+    <div class="body">
+      <div class="two">
+        <label>Retailer<input id="f-retailer" /></label>
+        <label>Order #<input id="f-orderNum" /></label>
+      </div>
+      <label>Item(s)<input id="f-item" /></label>
+      <div class="two">
+        <label>Quantity<input id="f-qty" type="number" min="0" step="1" /></label>
+        <label>Total ($)<input id="f-total" type="number" min="0" step="0.01" /></label>
+      </div>
+      <div class="two">
+        <label>Status
+          <select id="f-status">
+            <option>Ordered</option>
+            <option>In Transit</option>
+            <option>Delivered</option>
+          </select>
+        </label>
+        <label>Last update<input id="f-lastUpdate" type="date" /></label>
+      </div>
+      <div class="two">
+        <label>ETA<input id="f-eta" type="date" /></label>
+        <label>Carrier<input id="f-carrier" placeholder="USPS, UPS, FedEx..." /></label>
+      </div>
+      <label>Tracking #<input id="f-tracking" /></label>
+      <label>Tracking URL<input id="f-trackingUrl" placeholder="https://..." /></label>
+      <label>Deliver to<textarea id="f-shipTo" placeholder="Name, street, city, state, zip"></textarea></label>
+      <label>Notes<textarea id="f-notes" placeholder="Anything you want to remember"></textarea></label>
+    </div>
+    <div class="foot">
+      <button id="cancelBtn" class="ghost">Cancel</button>
+      <button id="saveBtn" class="primary">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* =======================================================================
+   SCRAPED ORDER DATA — auto-generated daily. Do not hand-edit; use the UI.
+   Each order has a stable `id` used to track user edits.
+   ======================================================================= */
+/* --- SCRAPED_START --- */
+const SCRAPED = [
+  { id:"ring-011-10490988", retailer:"Ring", item:"Ring order (details in email)", qty:null, total:null,
+    orderNum:"011-10490988", status:"Ordered", lastUpdate:"2026-04-21", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-2026-04-15-pokemon-scarlet", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+
+  { id:"usps-9341920111411216501947", retailer:"Amazon (via USPS)", item:"Amazon package",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-20", eta:"2026-04-20",
+    tracking:"9341920111411216501947", carrier:"USPS",
+    trackingUrl:"https://tools.usps.com/go/TrackConfirmAction?tLabels=9341920111411216501947",
+    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Shipped from Amazon · Out for delivery Apr 20 by 3:50pm" , source:"darrenustaris@gmail.com" },
+
+  { id:"usps-9400140109627774729627", retailer:"Pitney Bowes GEC (via USPS)",
+    item:"International package (often eBay/Etsy)", qty:null, total:null,
+    orderNum:"", status:"Delivered", lastUpdate:"2026-04-20", eta:"2026-04-20",
+    tracking:"9400140109627774729627", carrier:"USPS",
+    trackingUrl:"https://tools.usps.com/go/TrackConfirmAction?tLabels=9400140109627774729627",
+    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Out for delivery Apr 20 by 3:50pm · Delivered per user confirmation" , source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-2026-04-15-pokemon-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game",
+    qty:1, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-18",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:true, notes:"" , source:"darrenustaris@gmail.com" },
+
+  { id:"shopify-RPL6083", retailer:"Reformed Poke Lab", item:"Pokemon Perfect Order Booster Box",
+    qty:12, total:2230.00, orderNum:"RPL6083", status:"Delivered", lastUpdate:"2026-04-15", eta:"",
+    tracking:"1ZC1B491YW63031983", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1ZC1B491YW63031983",
+    stale:false, shipTo:"Thomas Lau\n1311 Glenwood Ave\nSan Jose, CA 95125", notes:"" , source:"darrenustaris@gmail.com" },
+
+  { id:"pokemoncenter-2026-04-14", retailer:"Pokémon Center", item:"Pokémon Center order",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-14", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+
+  { id:"usps-9400136208235344766045", retailer:"Descartes Systems (via USPS)",
+    item:"Package via USPS", qty:null, total:null, orderNum:"", status:"Delivered",
+    lastUpdate:"2026-04-13", eta:"2026-04-13",
+    tracking:"9400136208235344766045", carrier:"USPS",
+    trackingUrl:"https://tools.usps.com/go/TrackConfirmAction?tLabels=9400136208235344766045",
+    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Shipped from The Descartes Systems Group Inc · Expected by Apr 13" , source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-2026-04-07-pokemon-scarlet", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+
+  { id:"la28-391117453", retailer:"LA28 Olympics", item:"Olympic Ticket Order",
+    qty:null, total:null, orderNum:"391117453", status:"Ordered", lastUpdate:"2026-04-07", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"Forwarded from Reyn Teranishi" , source:"darrenustaris@gmail.com" },
+
+  { id:"la28-391117188", retailer:"LA28 Olympics",
+    item:"ATH15 Athletics (Track & Field) Mixed Final — Cat D ×2",
+    qty:2, total:2232.54, orderNum:"391117188", status:"Ordered", lastUpdate:"2026-04-07", eta:"",
+    tracking:"", carrier:"", trackingUrl:"",
+    stale:false, notes:"Sat 07.22.2028 · LA Memorial Coliseum · Digital delivery · Paid by Jamie Mangan (VISA)" , source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-2026-04-06-pokemon-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-06", eta:"",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+
+  { id:"usps-9261290326130777608955", retailer:"USPS shipment (unknown)",
+    item:"Package via USPS", qty:null, total:null, orderNum:"", status:"Delivered",
+    lastUpdate:"2026-04-03", eta:"2026-04-03",
+    tracking:"9261290326130777608955", carrier:"USPS",
+    trackingUrl:"https://tools.usps.com/go/TrackConfirmAction?tLabels=9261290326130777608955",
+    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Out for delivery Apr 3 by 3:35pm" , source:"darrenustaris@gmail.com" },
+
+  { id:"dsg-2026-03-31", retailer:"Dick's Sporting Goods", item:"Package delivered",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-31", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+
+  { id:"tcgplayer-jirachi-xy67a", retailer:"TCGplayer", item:"Jirachi - XY67a",
+    qty:1, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-03-26", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:true, notes:"Paid MASTERCARD" , source:"darrenustaris@gmail.com" },
+
+  { id:"pokemoncenter-2026-03-25", retailer:"Pokémon Center", item:"Pokémon Center order (shipped)",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-25", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-2026-03-24-crystal-geyser", retailer:"Walmart", item:"Crystal Geyser Alpine + 13 other items",
+    qty:14, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-24", eta:"",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" }
+];
+/* --- SCRAPED_END --- */
+
+/* =======================================================================
+   EDIT ENGINE
+   Persists to localStorage. Structure:
+     { overrides:{[id]:partialOrder}, additions:[order], deletions:[id] }
+   Downloadable/uploadable so the scheduled refresh can honor them.
+   ======================================================================= */
+const STORAGE_KEY = "ordersDashboard.edits.v1";
+// Seeded by the daily refresh from order_edits.json (if present on disk).
+// Used only when this browser's localStorage is empty.
+/* --- SEED_START --- */
+const SEED_EDITS = { overrides:{}, additions:[], deletions:[] };
+/* --- SEED_END --- */
+const EDITS = loadEdits();
+
+function loadEdits(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const e = JSON.parse(raw);
+      return { overrides: e.overrides||{}, additions: e.additions||[], deletions: e.deletions||[] };
+    }
+    return { overrides: SEED_EDITS.overrides||{}, additions: SEED_EDITS.additions||[], deletions: SEED_EDITS.deletions||[] };
+  }catch{
+    return { overrides:{}, additions:[], deletions:[] };
+  }
+}
+function saveEdits(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(EDITS)); }
+
+function applyEdits(){
+  // 1. drop deletions; 2. apply overrides; 3. append additions
+  const deleted = new Set(EDITS.deletions);
+  const scraped = SCRAPED
+    .filter(o => !deleted.has(o.id))
+    .map(o => {
+      const ov = EDITS.overrides[o.id];
+      if(!ov) return { ...o, _edited:false, _custom:false };
+      return { ...o, ...ov, _edited:true, _custom:false };
+    });
+  const added = EDITS.additions.map(o => ({ ...o, _edited:false, _custom:true }));
+  return [...scraped, ...added];
+}
+
+/* =======================================================================
+   UI
+   ======================================================================= */
+let state = { filter:'all', q:'', retailer:'', account:'', sortKey:'lastUpdate', sortDir:-1 };
+const tbody = document.getElementById('tbody');
+const q = document.getElementById('q');
+const retailerSel = document.getElementById('retailer');
+const accountSel = document.getElementById('accountSel');
+const empty = document.getElementById('empty');
+
+// Generate a stable muted color from an account string
+function srcColor(account){
+  if(!account) return '#8a93a6';
+  let h = 0;
+  for(let i=0;i<account.length;i++) h = (h*31 + account.charCodeAt(i)) >>> 0;
+  const hue = h % 360;
+  return `hsl(${hue},45%,62%)`;
+}
+function srcLabel(account){
+  if(!account) return '—';
+  return account.replace(/@.*$/,''); // strip @gmail.com etc.
+}
+const cards = [...document.querySelectorAll('.card')];
+const overlay = document.getElementById('overlay');
+const modalTitle = document.getElementById('modalTitle');
+const fields = ['retailer','orderNum','item','qty','total','status','lastUpdate','eta','carrier','tracking','trackingUrl','shipTo','notes']
+  .reduce((m,k)=>{m[k]=document.getElementById('f-'+k);return m;},{});
+
+let editingId = null; // if set, editing an existing scraped or custom order
+let editingIsCustom = false;
+
+function counts(list){
+  const c = { all: list.length, Ordered:0, 'In Transit':0, Delivered:0 };
+  for (const o of list) c[o.status]++;
+  document.getElementById('c-total').textContent = c.all;
+  document.getElementById('c-ordered').textContent = c.Ordered;
+  document.getElementById('c-transit').textContent = c['In Transit'];
+  document.getElementById('c-delivered').textContent = c.Delivered;
+}
+
+function fillRetailers(list){
+  retailerSel.innerHTML = '<option value="">All retailers</option>';
+  const names = [...new Set(list.map(o => o.retailer))].sort();
+  for (const n of names){
+    const opt = document.createElement('option');
+    opt.value = n; opt.textContent = n;
+    retailerSel.appendChild(opt);
+  }
+}
+function fillAccounts(list){
+  accountSel.innerHTML = '<option value="">All accounts</option>';
+  const accounts = [...new Set(list.map(o => o.source||'').filter(Boolean))].sort();
+  // update header
+  const accountListEl = document.getElementById('accountList');
+  if(accountListEl) accountListEl.textContent = accounts.length ? accounts.map(srcLabel).join(' · ') : 'multiple Gmail accounts';
+  for (const a of accounts){
+    const opt = document.createElement('option');
+    opt.value = a; opt.textContent = srcLabel(a);
+    accountSel.appendChild(opt);
+  }
+}
+
+function statusPill(s, o){
+  const map = { 'Ordered':'ordered', 'In Transit':'transit', 'Delivered':'delivered' };
+  let html = `<span class="pill ${map[s]||''}">${s}</span>`;
+  if (o.stale) html += ` <span class="pill stale" title="No email update in 7+ days">Stale</span>`;
+  if (o._edited) html += ` <span class="pill edited" title="You edited this row">Edited</span>`;
+  if (o._custom) html += ` <span class="pill custom" title="You added this row">Custom</span>`;
+  return html;
+}
+
+function fmtMoney(n){ if(n==null||n==='') return '—'; try{return '$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}catch{return String(n)} }
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])) }
+
+function render(){
+  const list = applyEdits();
+  counts(list);
+  fillRetailers(list);
+  fillAccounts(list);
+  if (state.retailer && !list.some(o=>o.retailer===state.retailer)) state.retailer='';
+  if (state.account && !list.some(o=>o.source===state.account)) state.account='';
+  retailerSel.value = state.retailer;
+  accountSel.value = state.account;
+
+  const term = state.q.trim().toLowerCase();
+  const rows = list
+    .filter(o => state.filter === 'all' || o.status === state.filter)
+    .filter(o => !state.retailer || o.retailer === state.retailer)
+    .filter(o => !state.account || (o.source||'') === state.account)
+    .filter(o => !term || [o.retailer,o.item,o.orderNum,o.tracking,o.carrier,o.shipTo,o.notes,o.source].join(' ').toLowerCase().includes(term))
+    .sort((a,b)=>{
+      const k = state.sortKey;
+      const av = (a[k]==null?'':a[k]).toString();
+      const bv = (b[k]==null?'':b[k]).toString();
+      if (av < bv) return -1 * state.sortDir;
+      if (av > bv) return  1 * state.sortDir;
+      return 0;
+    });
+
+  tbody.innerHTML = '';
+  for (const o of rows){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="retailer">${esc(o.retailer)||'—'}</td>
+      <td><span class="pill src" style="color:${srcColor(o.source||'')}" title="${esc(o.source||'')}">${esc(srcLabel(o.source||''))}</span></td>
+      <td>${esc(o.item)||'—'}</td>
+      <td class="mono">${o.qty==null||o.qty===''?'—':esc(o.qty)}</td>
+      <td class="mono">${fmtMoney(o.total)}</td>
+      <td class="mono">${esc(o.orderNum)||'—'}</td>
+      <td>${statusPill(o.status, o)}</td>
+      <td>${esc(o.lastUpdate)||'—'}</td>
+      <td>${esc(o.eta)||'—'}</td>
+      <td>${o.tracking ? (o.trackingUrl ? `<a href="${esc(o.trackingUrl)}" target="_blank" rel="noopener" class="mono">${esc(o.tracking)}</a> <span class="desc">(${esc(o.carrier||'')})</span>` : `<span class="mono">${esc(o.tracking)}</span>`) : '—'}</td>
+      <td class="desc" style="white-space:pre-line">${esc(o.shipTo)||'—'}</td>
+      <td class="desc">${esc(o.notes)||'—'}</td>
+      <td>
+        <div class="row-actions">
+          <button data-edit="${esc(o.id)}" title="Edit">✎</button>
+          <button data-del="${esc(o.id)}" data-custom="${o._custom?1:0}" class="danger" title="Delete">🗑</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  }
+  empty.style.display = rows.length ? 'none' : 'block';
+
+  // wire row buttons
+  tbody.querySelectorAll('button[data-edit]').forEach(b =>
+    b.addEventListener('click', () => openEdit(b.getAttribute('data-edit'))));
+  tbody.querySelectorAll('button[data-del]').forEach(b =>
+    b.addEventListener('click', () => deleteRow(b.getAttribute('data-del'), b.getAttribute('data-custom')==='1')));
+}
+
+function getOrderById(id){
+  const merged = applyEdits();
+  return merged.find(o => o.id === id) || null;
+}
+
+function openEdit(id){
+  const o = getOrderById(id);
+  if(!o) return;
+  editingId = id;
+  editingIsCustom = !!o._custom;
+  modalTitle.textContent = editingIsCustom ? 'Edit custom order' : 'Edit order';
+  setFields(o);
+  overlay.classList.add('show');
+}
+
+function openAdd(){
+  editingId = null;
+  editingIsCustom = true;
+  modalTitle.textContent = 'Add custom order';
+  setFields({ retailer:'', item:'', qty:null, total:null, orderNum:'', status:'Ordered',
+    lastUpdate: new Date().toISOString().slice(0,10), eta:'', tracking:'', carrier:'', trackingUrl:'', notes:'' });
+  overlay.classList.add('show');
+}
+
+function setFields(o){
+  fields.retailer.value = o.retailer||'';
+  fields.orderNum.value = o.orderNum||'';
+  fields.item.value = o.item||'';
+  fields.qty.value = o.qty==null?'':o.qty;
+  fields.total.value = o.total==null?'':o.total;
+  fields.status.value = o.status||'Ordered';
+  fields.lastUpdate.value = o.lastUpdate||'';
+  fields.eta.value = o.eta||'';
+  fields.carrier.value = o.carrier||'';
+  fields.tracking.value = o.tracking||'';
+  fields.trackingUrl.value = o.trackingUrl||'';
+  fields.shipTo.value = o.shipTo||'';
+  fields.notes.value = o.notes||'';
+}
+function readFields(){
+  const toNum = v => v===''||v==null?null:Number(v);
+  return {
+    retailer: fields.retailer.value.trim(),
+    orderNum: fields.orderNum.value.trim(),
+    item: fields.item.value.trim(),
+    qty: toNum(fields.qty.value),
+    total: toNum(fields.total.value),
+    status: fields.status.value,
+    lastUpdate: fields.lastUpdate.value,
+    eta: fields.eta.value,
+    carrier: fields.carrier.value.trim(),
+    tracking: fields.tracking.value.trim(),
+    trackingUrl: fields.trackingUrl.value.trim(),
+    shipTo: fields.shipTo.value.trim(),
+    notes: fields.notes.value.trim()
+  };
+}
+function closeModal(){ overlay.classList.remove('show'); }
+
+function saveModal(){
+  const patch = readFields();
+  if (editingId == null){
+    // new custom row
+    const id = 'custom-' + Date.now();
+    EDITS.additions.push({ id, stale:false, ...patch });
+  } else if (editingIsCustom){
+    // editing a previously added custom row
+    const i = EDITS.additions.findIndex(o => o.id === editingId);
+    if (i >= 0) EDITS.additions[i] = { ...EDITS.additions[i], ...patch };
+  } else {
+    // override on scraped row
+    EDITS.overrides[editingId] = { ...(EDITS.overrides[editingId]||{}), ...patch };
+  }
+  saveEdits();
+  closeModal();
+  render();
+  toast('Saved. Remember to Export edits so the daily refresh keeps them.');
+}
+
+function deleteRow(id, isCustom){
+  if (!confirm('Delete this order from the dashboard?')) return;
+  if (isCustom){
+    EDITS.additions = EDITS.additions.filter(o => o.id !== id);
+  } else {
+    if (!EDITS.deletions.includes(id)) EDITS.deletions.push(id);
+    // remove any override for it
+    delete EDITS.overrides[id];
+  }
+  saveEdits();
+  render();
+  toast('Row removed. Export edits to persist through refresh.');
+}
+
+/* Export/Import */
+function exportEdits(){
+  const blob = new Blob([JSON.stringify(EDITS,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'order_edits.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Saved order_edits.json — drop it next to the dashboard file so the daily refresh picks it up.');
+}
+function importEdits(file){
+  const r = new FileReader();
+  r.onload = () => {
+    try{
+      const e = JSON.parse(r.result);
+      EDITS.overrides = e.overrides||{};
+      EDITS.additions = e.additions||[];
+      EDITS.deletions = e.deletions||[];
+      saveEdits();
+      render();
+      toast('Imported edits.');
+    }catch(err){ toast('Import failed: '+err.message); }
+  };
+  r.readAsText(file);
+}
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+/* wire UI */
+cards.forEach(c => c.addEventListener('click', () => {
+  cards.forEach(x => x.classList.remove('active'));
+  c.classList.add('active');
+  state.filter = c.dataset.filter;
+  render();
+}));
+q.addEventListener('input', e => { state.q = e.target.value; render(); });
+retailerSel.addEventListener('change', e => { state.retailer = e.target.value; render(); });
+accountSel.addEventListener('change', e => { state.account = e.target.value; render(); });
+document.querySelectorAll('th[data-k]').forEach(th => {
+  th.addEventListener('click', () => {
+    const k = th.dataset.k;
+    if (state.sortKey === k) state.sortDir *= -1;
+    else { state.sortKey = k; state.sortDir = -1; }
+    render();
+  });
+});
+document.getElementById('addBtn').addEventListener('click', openAdd);
+document.getElementById('saveBtn').addEventListener('click', saveModal);
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.getElementById('exportBtn').addEventListener('click', exportEdits);
+document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', e => { if(e.target.files[0]) importEdits(e.target.files[0]); e.target.value=''; });
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!confirm('Clear ALL your edits? This cannot be undone.')) return;
+  EDITS.overrides = {}; EDITS.additions = []; EDITS.deletions = [];
+  saveEdits(); render(); toast('Edits cleared.');
+});
+
+document.getElementById('snapshot').textContent = new Date().toLocaleString();
+render();
+</script>
+</body>
+</html>
