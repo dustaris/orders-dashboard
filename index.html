@@ -291,15 +291,15 @@ const SCRAPED = [
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
 
   { id:"walmart-2026-04-15-pokemon-scarlet", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
-    qty:5, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-16", eta:"2026-04-21",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"Shipped Apr 16; ETA Apr 21 (today)", source:"darrenustaris3@gmail.com" },
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"Shipped Apr 16; arrived Apr 21; card shop inventory", source:"darrenustaris3@gmail.com" },
 
 
   { id:"walmart-2026-04-15-pokemon-tcg", retailer:"Walmart", item:"Pokemon TCG Phantasmal Flames Elite Trainer Box",
-    qty:1, total:null, orderNum:"2000147-13448180", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-18",
+    qty:1, total:null, orderNum:"2000147-13448180", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-18",
     tracking:"1ZHE53840330173603", carrier:"UPS",
     trackingUrl:"https://www.ups.com/track?tracknum=1ZHE53840330173603",
-    stale:true, shipTo:"", notes:"Shipped Apr 15 via UPS; ETA Apr 18 passed; no delivery confirmation received", source:"darrenustaris@gmail.com" },
+    stale:false, shipTo:"", notes:"Shipped Apr 15 via UPS; arrived Apr 21", source:"darrenustaris@gmail.com" },
 
   { id:"shopify-RPL6083", retailer:"Reformed Poke Lab", item:"Pokemon Perfect Order Booster Box",
     qty:12, total:2230.00, orderNum:"RPL6083", status:"Delivered", lastUpdate:"2026-04-15", eta:"",
@@ -378,9 +378,9 @@ const SCRAPED = [
 
   { id:"walmart-wdcardshop2-2026-04-15-scarlet", retailer:"Walmart",
     item:"Pokemon Scarlet & Violet + 4 other items",
-    qty:5, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-21",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
-    notes:"Shipped Apr 15; ETA Apr 21; card shop inventory", source:"wdcardshop2@gmail.com" },
+    notes:"Shipped Apr 15; arrived Apr 21; card shop inventory", source:"wdcardshop2@gmail.com" },
 
   { id:"walmart-wdcardshop2-2026-04-canceled-tcg", retailer:"Walmart",
     item:"Pokemon Trading Card Game + 4 other items",
@@ -392,9 +392,9 @@ const SCRAPED = [
 
   { id:"walmart-wdcardshop3-2026-04-15-scarlet", retailer:"Walmart",
     item:"Pokemon Scarlet & Violet + 4 other items",
-    qty:5, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-21",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
-    notes:"Shipped Apr 15; ETA Apr 21; card shop inventory", source:"wdcardshop3@gmail.com" },
+    notes:"Shipped Apr 15; arrived Apr 21; card shop inventory", source:"wdcardshop3@gmail.com" },
 
   { id:"walmart-wdcardshop3-2026-04-canceled-scarlet", retailer:"Walmart",
     item:"Pokemon Scarlet & Violet + 4 other items",
@@ -420,7 +420,148 @@ const SCRAPED = [
     item:"Crystal Geyser Alpine Spring Water + 13 other items",
     qty:14, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"",
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
-    notes:"Grocery delivery; delayed and rescheduled; delivered Apr 2026", source:"darrenustaris@gmail.com" }
+    notes:"Grocery delivery; delayed and rescheduled; delivered Apr 2026", source:"darrenustaris@gmail.com" },
+
+  // ===== NEW ENTRIES — darrenustaris (Walmart orders) =====
+
+  { id:"pokesignals-2026-04-09", retailer:"Poke Signals (Whop)", item:"Poke Signals order / membership",
+    qty:null, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-09", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
+    notes:"Order/membership placed Apr 9 via Whop; no further updates", source:"wdcardshop@gmail.com" },
+
+  { id:"walmart-darrenustaris-2026-03-26-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-27", eta:"2026-03-27",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Mar 26; ETA Mar 27; delivered; card shop inventory", source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-darrenustaris-2026-04-05-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-darrenustaris-2026-04-13-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet Violet 8.5 Prismatic Evolutions Poster Collection ×5",
+    qty:5, total:124.95, orderNum:"2000146-42675672", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Order #2000146-42675672; ordered Apr 13; $124.95; arrived Apr 21; card shop inventory", source:"darrenustaris@gmail.com" },
+
+  // ===== NEW ENTRIES — darrenustaris3 (Walmart orders) =====
+
+  { id:"walmart-darrenustaris3-2026-04-01-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-06", eta:"2026-04-06",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 1; ETA Apr 6; delivered; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-darrenustaris3-2026-04-01-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 1; ETA Apr 7; delivered; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-darrenustaris3-2026-04-05-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-darrenustaris3-2026-04-16-tcg-a", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 16; arrived Apr 21; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-darrenustaris3-2026-04-16-tcg-b", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 16; arrived Apr 21; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-darrenustaris3-2026-04-16-tcg-c", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 16; arrived Apr 21; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-darrenustaris3-2026-04-16-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 16; arrived Apr 21; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  // ===== NEW ENTRIES — darrenustaris2 (Walmart orders) =====
+
+  { id:"walmart-darrenustaris2-2026-04-01-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 1; ETA Apr 7; delivered; card shop inventory", source:"darrenustaris2@gmail.com" },
+
+  { id:"walmart-darrenustaris2-2026-04-01-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 1; ETA Apr 7; delivered; card shop inventory", source:"darrenustaris2@gmail.com" },
+
+  { id:"walmart-darrenustaris2-2026-04-04-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-09", eta:"2026-04-09",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 4; ETA Apr 9; delivered; card shop inventory", source:"darrenustaris2@gmail.com" },
+
+  { id:"walmart-darrenustaris2-2026-04-21-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Arrived Apr 21; card shop inventory", source:"darrenustaris2@gmail.com" },
+
+  // ===== NEW ENTRIES — wdcardshop2 (Walmart orders) =====
+
+  { id:"walmart-wdcardshop2-2026-04-01-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 1; ETA Apr 7; delivered; card shop inventory", source:"wdcardshop2@gmail.com" },
+
+  { id:"walmart-wdcardshop2-2026-04-01-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 1; ETA Apr 7; delivered; card shop inventory", source:"wdcardshop2@gmail.com" },
+
+  { id:"walmart-wdcardshop2-2026-04-05-tcg-a", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"wdcardshop2@gmail.com" },
+
+  { id:"walmart-wdcardshop2-2026-04-05-tcg-b", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"wdcardshop2@gmail.com" },
+
+  // ===== NEW ENTRIES — wdcardshop3 (Walmart orders) =====
+
+  { id:"walmart-wdcardshop3-2026-03-31-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-06", eta:"2026-04-06",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Mar 31; ETA Apr 6; delivered; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  { id:"walmart-wdcardshop3-2026-04-05-tcg-a", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  { id:"walmart-wdcardshop3-2026-04-05-tcg-b", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
+    notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"wdcardshop3@gmail.com" }
 ];
 /* --- SCRAPED_END --- */
 
