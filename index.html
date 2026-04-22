@@ -75,6 +75,34 @@
   .pill.src{background:rgba(255,255,255,.07);color:var(--muted);font-size:10px;letter-spacing:.1px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
   @media (max-width:900px){.cards{grid-template-columns:repeat(3,1fr)}}
   @media (max-width:760px){.cards{grid-template-columns:repeat(2,1fr)} .two{grid-template-columns:1fr}}
+  @media (max-width:640px){
+    header{padding:14px 16px;gap:6px}
+    header h1{font-size:17px}
+    .header-hint{display:none}
+    .wrap{padding:12px}
+    .cards{gap:8px;margin-bottom:14px}
+    .card{padding:10px 12px}
+    .card .num{font-size:22px}
+    .card .label{font-size:11px}
+    .toolbar{gap:8px;flex-wrap:wrap}
+    .toolbar input[type=search]{min-width:0;width:100%}
+    .toolbar select{min-width:0;flex:1}
+    .toolbar .spacer{display:none}
+    .toolbar-actions{display:flex;gap:6px;width:100%;flex-wrap:wrap}
+    .toolbar-actions button{flex:1;font-size:12px;padding:7px 6px}
+    table{display:block;background:transparent;border:none;border-radius:0;overflow:visible}
+    thead{display:none}
+    tbody{display:block}
+    tr{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;padding:14px 14px 10px}
+    tr:hover td{background:transparent}
+    td{display:flex;gap:10px;padding:5px 0;border:none;font-size:13px;align-items:flex-start}
+    td::before{content:attr(data-label);color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;min-width:76px;flex-shrink:0;padding-top:2px}
+    td[data-label="Actions"]{justify-content:flex-end;padding-top:10px;margin-top:6px;border-top:1px solid var(--line)}
+    td[data-label="Actions"]::before{display:none}
+    .row-actions{gap:8px}
+    .row-actions button{padding:7px 14px;font-size:13px}
+  }
+  @media (max-width:400px){.cards{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -83,7 +111,7 @@
     <h1>Orders Dashboard</h1>
     <div class="meta">Snapshot: <span id="snapshot"></span> · Source: <span id="accountList">darrenustaris · darrenustaris2 · darrenustaris3 · wd.cardshop01 · wdcardshop · wdcardshop2 · wdcardshop3 · wdcardshop5</span> (last 30 days)</div>
   </div>
-  <div class="meta">Click a card to filter · Headers sort · Pencil/trash edits · Use Export to save edits for the daily refresh</div>
+  <div class="meta header-hint">Click a card to filter · Headers sort · Pencil/trash edits · Use Export to save edits for the daily refresh</div>
 </header>
 
 <div class="wrap">
@@ -100,11 +128,13 @@
     <select id="retailer"><option value="">All retailers</option></select>
     <select id="accountSel"><option value="">All accounts</option></select>
     <div class="spacer"></div>
-    <button id="addBtn" class="primary">+ Add order</button>
-    <button id="exportBtn" title="Save your edits to a JSON file. The daily refresh reads this file.">Export edits</button>
-    <button id="importBtn" title="Load an edits JSON file">Import</button>
-    <input id="importFile" type="file" accept="application/json" style="display:none" />
-    <button id="resetBtn" class="ghost" title="Clear ALL your edits (cannot undo)">Clear edits</button>
+    <div class="toolbar-actions">
+      <button id="addBtn" class="primary">+ Add order</button>
+      <button id="exportBtn" title="Save your edits to a JSON file. The daily refresh reads this file.">Export edits</button>
+      <button id="importBtn" title="Load an edits JSON file">Import</button>
+      <input id="importFile" type="file" accept="application/json" style="display:none" />
+      <button id="resetBtn" class="ghost" title="Clear ALL your edits (cannot undo)">Clear edits</button>
+    </div>
   </div>
 
   <table id="tbl">
@@ -734,19 +764,19 @@ function render(){
   for (const o of rows){
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td class="retailer">${esc(o.retailer)||'—'}</td>
-      <td><span class="pill src" style="color:${srcColor(o.source||'')}" title="${esc(o.source||'')}">${esc(srcLabel(o.source||''))}</span></td>
-      <td>${esc(o.item)||'—'}</td>
-      <td class="mono">${o.qty==null||o.qty===''?'—':esc(o.qty)}</td>
-      <td class="mono">${fmtMoney(o.total)}</td>
-      <td class="mono">${esc(o.orderNum)||'—'}</td>
-      <td>${statusPill(o.status, o)}</td>
-      <td>${esc(o.lastUpdate)||'—'}</td>
-      <td>${esc(o.eta)||'—'}</td>
-      <td>${o.tracking ? (o.trackingUrl ? `<a href="${esc(o.trackingUrl)}" target="_blank" rel="noopener" class="mono">${esc(o.tracking)}</a> <span class="desc">(${esc(o.carrier||'')})</span>` : `<span class="mono">${esc(o.tracking)}</span>`) : '—'}</td>
-      <td class="desc" style="white-space:pre-line">${esc(o.shipTo)||'—'}</td>
-      <td class="desc">${esc(o.notes)||'—'}</td>
-      <td>
+      <td data-label="Retailer" class="retailer">${esc(o.retailer)||'—'}</td>
+      <td data-label="Account"><span class="pill src" style="color:${srcColor(o.source||'')}" title="${esc(o.source||'')}">${esc(srcLabel(o.source||''))}</span></td>
+      <td data-label="Item">${esc(o.item)||'—'}</td>
+      <td data-label="Qty" class="mono">${o.qty==null||o.qty===''?'—':esc(o.qty)}</td>
+      <td data-label="Total" class="mono">${fmtMoney(o.total)}</td>
+      <td data-label="Order #" class="mono">${esc(o.orderNum)||'—'}</td>
+      <td data-label="Status">${statusPill(o.status, o)}</td>
+      <td data-label="Updated">${esc(o.lastUpdate)||'—'}</td>
+      <td data-label="ETA">${esc(o.eta)||'—'}</td>
+      <td data-label="Tracking">${o.tracking ? (o.trackingUrl ? `<a href="${esc(o.trackingUrl)}" target="_blank" rel="noopener" class="mono">${esc(o.tracking)}</a> <span class="desc">(${esc(o.carrier||'')})</span>` : `<span class="mono">${esc(o.tracking)}</span>`) : '—'}</td>
+      <td data-label="Ship To" class="desc" style="white-space:pre-line">${esc(o.shipTo)||'—'}</td>
+      <td data-label="Notes" class="desc">${esc(o.notes)||'—'}</td>
+      <td data-label="Actions">
         <div class="row-actions">
           <button data-edit="${esc(o.id)}" title="Edit">✎</button>
           <button data-del="${esc(o.id)}" data-custom="${o._custom?1:0}" class="danger" title="Delete">🗑</button>
