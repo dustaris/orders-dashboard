@@ -75,34 +75,6 @@
   .pill.src{background:rgba(255,255,255,.07);color:var(--muted);font-size:10px;letter-spacing:.1px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
   @media (max-width:900px){.cards{grid-template-columns:repeat(3,1fr)}}
   @media (max-width:760px){.cards{grid-template-columns:repeat(2,1fr)} .two{grid-template-columns:1fr}}
-  @media (max-width:640px){
-    header{padding:14px 16px;gap:6px}
-    header h1{font-size:17px}
-    .header-hint{display:none}
-    .wrap{padding:12px}
-    .cards{gap:8px;margin-bottom:14px}
-    .card{padding:10px 12px}
-    .card .num{font-size:22px}
-    .card .label{font-size:11px}
-    .toolbar{gap:8px;flex-wrap:wrap}
-    .toolbar input[type=search]{min-width:0;width:100%}
-    .toolbar select{min-width:0;flex:1}
-    .toolbar .spacer{display:none}
-    .toolbar-actions{display:flex;gap:6px;width:100%;flex-wrap:wrap}
-    .toolbar-actions button{flex:1;font-size:12px;padding:7px 6px}
-    table{display:block;background:transparent;border:none;border-radius:0;overflow:visible}
-    thead{display:none}
-    tbody{display:block}
-    tr{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;padding:14px 14px 10px}
-    tr:hover td{background:transparent}
-    td{display:flex;gap:10px;padding:5px 0;border:none;font-size:13px;align-items:flex-start}
-    td::before{content:attr(data-label);color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;min-width:76px;flex-shrink:0;padding-top:2px}
-    td[data-label="Actions"]{justify-content:flex-end;padding-top:10px;margin-top:6px;border-top:1px solid var(--line)}
-    td[data-label="Actions"]::before{display:none}
-    .row-actions{gap:8px}
-    .row-actions button{padding:7px 14px;font-size:13px}
-  }
-  @media (max-width:400px){.cards{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -111,7 +83,7 @@
     <h1>Orders Dashboard</h1>
     <div class="meta">Snapshot: <span id="snapshot"></span> · Source: <span id="accountList">darrenustaris · darrenustaris2 · darrenustaris3 · wd.cardshop01 · wdcardshop · wdcardshop2 · wdcardshop3 · wdcardshop5</span> (last 30 days)</div>
   </div>
-  <div class="meta header-hint">Click a card to filter · Headers sort · Pencil/trash edits · Use Export to save edits for the daily refresh</div>
+  <div class="meta">Click a card to filter · Headers sort · Pencil/trash edits · Use Export to save edits for the daily refresh</div>
 </header>
 
 <div class="wrap">
@@ -128,13 +100,11 @@
     <select id="retailer"><option value="">All retailers</option></select>
     <select id="accountSel"><option value="">All accounts</option></select>
     <div class="spacer"></div>
-    <div class="toolbar-actions">
-      <button id="addBtn" class="primary">+ Add order</button>
-      <button id="exportBtn" title="Save your edits to a JSON file. The daily refresh reads this file.">Export edits</button>
-      <button id="importBtn" title="Load an edits JSON file">Import</button>
-      <input id="importFile" type="file" accept="application/json" style="display:none" />
-      <button id="resetBtn" class="ghost" title="Clear ALL your edits (cannot undo)">Clear edits</button>
-    </div>
+    <button id="addBtn" class="primary">+ Add order</button>
+    <button id="exportBtn" title="Save your edits to a JSON file. The daily refresh reads this file.">Export edits</button>
+    <button id="importBtn" title="Load an edits JSON file">Import</button>
+    <input id="importFile" type="file" accept="application/json" style="display:none" />
+    <button id="resetBtn" class="ghost" title="Clear ALL your edits (cannot undo)">Clear edits</button>
   </div>
 
   <table id="tbl">
@@ -218,7 +188,7 @@ const SCRAPED = [
 
   { id:"acd-2026-04-19", retailer:"ACD Distribution", item:"ACD Distribution order (awaiting shipment)",
     qty:null, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-19", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"Order placed Apr 19; tracking to follow", source:"wdcardshop@gmail.com" },
+    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"", notes:"Order placed Apr 19; tracking to follow", source:"wdcardshop@gmail.com" },
 
   { id:"ups-1ZRW55790396623610", retailer:"ACD Distribution", item:"ACD Distribution inventory order",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-20", eta:"2026-04-20",
@@ -232,7 +202,7 @@ const SCRAPED = [
     trackingUrl:"https://www.ups.com/track?tracknum=1Z5F23380317923534",
     stale:false, shipTo:"", notes:"3 packages shipped Apr 15–16; also 1Z5F23380303357753 & 1Z5F23380306299347; delivered Apr 18 9:42 AM", source:"wdcardshop@gmail.com" },
 
-  { id:"goldriverdistributors-8961", retailer:"Gold River Distributors", item:"Gold River inventory order",
+  { id:"goldriverdistributors-8961", retailer:"Gold River Distributors", item:"Gold River inventory order (Pokemon ME Ascended Heroes + First Partner Illustration Collection)",
     qty:null, total:2431.58, orderNum:"8961", status:"Delivered", lastUpdate:"2026-04-17", eta:"2026-04-17",
     tracking:"1Z5X74750344677053", carrier:"UPS",
     trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750344677053",
@@ -314,22 +284,17 @@ const SCRAPED = [
     tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
     notes:"September 2026 delivery; paid MasterCard $120 + $10 shipping + $11.25 tax; forwarded from wdcardshop2@gmail.com", source:"wdcardshop@gmail.com" },
 
-  // ===== PERSONAL (darrenustaris) — preserved from prior run =====
-
-  { id:"ring-011-10490988", retailer:"Ring", item:"Ring order (details in email)",
-    qty:null, total:null, orderNum:"011-10490988", status:"Ordered", lastUpdate:"2026-04-21", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
+  // ===== PERSONAL (darrenustaris) =====
 
   { id:"walmart-2026-04-15-pokemon-scarlet", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
     qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"Shipped Apr 16; arrived Apr 21; card shop inventory", source:"darrenustaris3@gmail.com" },
 
-
   { id:"walmart-2026-04-15-pokemon-tcg", retailer:"Walmart", item:"Pokemon TCG Phantasmal Flames Elite Trainer Box",
-    qty:1, total:null, orderNum:"2000147-13448180", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-18",
+    qty:1, total:69.99, orderNum:"2000147-13448180", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-18",
     tracking:"1ZHE53840330173603", carrier:"UPS",
     trackingUrl:"https://www.ups.com/track?tracknum=1ZHE53840330173603",
-    stale:false, shipTo:"", notes:"Shipped Apr 15 via UPS; arrived Apr 21", source:"darrenustaris@gmail.com" },
+    stale:false, shipTo:"21995 Bellcroft Dr, Lake Forest, CA 92630", notes:"Shipped Apr 15 via UPS; arrived Apr 21; ordered Apr 13", source:"darrenustaris@gmail.com" },
 
   { id:"shopify-RPL6083", retailer:"Reformed Poke Lab", item:"Pokemon Perfect Order Booster Box",
     qty:12, total:2230.00, orderNum:"RPL6083", status:"Delivered", lastUpdate:"2026-04-15", eta:"",
@@ -337,22 +302,13 @@ const SCRAPED = [
     trackingUrl:"https://www.ups.com/track?tracknum=1ZC1B491YW63031983",
     stale:false, shipTo:"Thomas Lau\n1311 Glenwood Ave\nSan Jose, CA 95125", notes:"", source:"darrenustaris@gmail.com" },
 
-  { id:"pokemoncenter-2026-04-14", retailer:"Pokémon Center", item:"Pokémon Center order",
+  { id:"pokemoncenter-2026-04-14", retailer:"Pok\u00e9mon Center", item:"Pok\u00e9mon Center order",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-14", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
 
   { id:"walmart-2026-04-07-pokemon-scarlet", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
     qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"",
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
-
-  { id:"la28-391117453", retailer:"LA28 Olympics", item:"Olympic Ticket Order",
-    qty:null, total:null, orderNum:"391117453", status:"Ordered", lastUpdate:"2026-04-07", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"", notes:"Forwarded from Reyn Teranishi · 2028 event", source:"darrenustaris@gmail.com" },
-
-  { id:"la28-391117188", retailer:"LA28 Olympics", item:"ATH15 Athletics (Track & Field) Mixed Final — Cat D ×2",
-    qty:2, total:2232.54, orderNum:"391117188", status:"Ordered", lastUpdate:"2026-04-07", eta:"",
-    tracking:"", carrier:"", trackingUrl:"",
-    stale:true, shipTo:"", notes:"Sat 07.22.2028 · LA Memorial Coliseum · Digital delivery · Paid by Jamie Mangan (VISA)", source:"darrenustaris@gmail.com" },
 
   { id:"walmart-2026-04-06-pokemon-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items",
     qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-06", eta:"",
@@ -362,15 +318,11 @@ const SCRAPED = [
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-31", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
 
-  { id:"tcgplayer-jirachi-xy67a", retailer:"TCGplayer", item:"Jirachi - XY67a",
-    qty:1, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-03-26", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"", notes:"Paid MASTERCARD", source:"darrenustaris@gmail.com" },
-
-  { id:"pokemoncenter-2026-03-25", retailer:"Pokémon Center", item:"Pokémon Center order (shipped)",
+  { id:"pokemoncenter-2026-03-25", retailer:"Pok\u00e9mon Center", item:"Pok\u00e9mon Center order (shipped)",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-25", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"", notes:"", source:"darrenustaris@gmail.com" },
 
-  // ===== NEW ENTRIES — darrenustaris3 =====
+  // ===== darrenustaris3 =====
 
   { id:"walmart-2026-03-25-pokemon-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items",
     qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-25", eta:"",
@@ -380,34 +332,27 @@ const SCRAPED = [
   { id:"walmart-2026-04-02-canceled-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items",
     qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-02", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
-    notes:"Cancelled Apr 2 — not charged; delivery cancellation", source:"darrenustaris3@gmail.com" },
+    notes:"Cancelled Apr 2 \u2014 not charged; delivery cancellation", source:"darrenustaris3@gmail.com" },
 
-  // ===== darrenustaris2 — NEW ENTRIES =====
-
-  { id:"pokemoncenter-2026-04-13", retailer:"Pokémon Center", item:"Pokémon Center order (order confirmation)",
-    qty:null, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-13", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
-    notes:"Order confirmation received Apr 13; addressed to Brandon", source:"darrenustaris2@gmail.com" },
-
-  // ===== wd.cardshop01 — NEW ENTRIES =====
+  // ===== wd.cardshop01 =====
 
   { id:"walmart-wdcardshop01-2026-04-14-canceled", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
     qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-14", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
-    notes:"Cancelled Apr 14 — policy flag; not charged", source:"wd.cardshop01@gmail.com" },
+    notes:"Cancelled Apr 14 \u2014 policy flag; not charged", source:"wd.cardshop01@gmail.com" },
 
-  // ===== wdcardshop5 — NEW ENTRIES =====
+  // ===== wdcardshop5 =====
 
   { id:"walmart-wdcardshop5-2026-04-13-canceled", retailer:"Walmart",
     item:"Pokemon TCG Phantasmal Flames Booster Bundle",
-    qty:1, total:null, orderNum:"2000143-05172119", status:"Cancelled", lastUpdate:"2026-04-13", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
-    notes:"Cancelled Apr 13 — policy flag; Order# 2000143-05172119; not charged", source:"wdcardshop5@gmail.com" },
+    qty:5, total:219.95, orderNum:"2000143-05172119", status:"Cancelled", lastUpdate:"2026-04-21", eta:"",
+    tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"1473 Graywood Drive Rm 2, San Jose, CA 95129",
+    notes:"Cancelled \u2014 policy flag; Order# 2000143-05172119; $219.95; not charged; ordered Apr 13, ETA Apr 20; card shop inventory", source:"wdcardshop5@gmail.com" },
 
-  // ===== wdcardshop2 — NEW ENTRIES =====
+  // ===== wdcardshop2 =====
 
   { id:"walmart-wdcardshop2-2026-04-15-scarlet", retailer:"Walmart",
-    item:"Pokemon SV8.5 Prismatic Evolutions Poster Collection ×5",
+    item:"Pokemon SV8.5 Prismatic Evolutions Poster Collection x5",
     qty:5, total:null, orderNum:"2000144-86487663", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
     tracking:"1ZHE53840330226494", carrier:"UPS",
     trackingUrl:"https://www.ups.com/track?tracknum=1ZHE53840330226494",
@@ -418,9 +363,9 @@ const SCRAPED = [
     item:"Pokemon Trading Card Game + 4 other items",
     qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-15", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
-    notes:"Cancelled — not charged; card shop inventory", source:"wdcardshop2@gmail.com" },
+    notes:"Cancelled \u2014 not charged; card shop inventory", source:"wdcardshop2@gmail.com" },
 
-  // ===== wdcardshop3 — NEW ENTRIES =====
+  // ===== wdcardshop3 =====
 
   { id:"walmart-wdcardshop3-2026-04-15-scarlet", retailer:"Walmart",
     item:"Pokemon Scarlet & Violet + 4 other items",
@@ -432,34 +377,27 @@ const SCRAPED = [
     item:"Pokemon Scarlet & Violet + 4 other items",
     qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-15", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
-    notes:"Cancelled — policy flag; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
+    notes:"Cancelled \u2014 policy flag; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
 
   { id:"walmart-wdcardshop3-2026-04-canceled-tcg-issue", retailer:"Walmart",
     item:"Pokemon Trading Card Game + 4 other items",
     qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-15", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
-    notes:"Cancelled — unexpected issue; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
+    notes:"Cancelled \u2014 unexpected issue; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
 
   { id:"walmart-wdcardshop3-2026-04-canceled-tcg-qty", retailer:"Walmart",
     item:"Pokemon Trading Card Game + 4 other items",
     qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-15", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
-    notes:"Cancelled — exceeded quantity limit; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
+    notes:"Cancelled \u2014 exceeded quantity limit; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
 
-  // ===== darrenustaris — NEW ENTRIES =====
+  // ===== darrenustaris — Walmart orders =====
 
-  { id:"walmart-darrenustaris-2026-04-crystal-geyser", retailer:"Walmart",
-    item:"Crystal Geyser Alpine Spring Water + 13 other items",
-    qty:14, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"",
+  { id:"walmart-darrenustaris-2026-04-13-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet Violet 8.5 Prismatic Evolutions Poster Collection x5",
+    qty:5, total:124.95, orderNum:"2000146-42675672", status:"Delivered", lastUpdate:"2026-04-22", eta:"2026-04-21",
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
-    notes:"Grocery delivery; delayed and rescheduled; delivered Apr 2026", source:"darrenustaris@gmail.com" },
-
-  // ===== NEW ENTRIES — darrenustaris (Walmart orders) =====
-
-  { id:"pokesignals-2026-04-09", retailer:"Poke Signals (Whop)", item:"Poke Signals order / membership",
-    qty:null, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-09", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, shipTo:"",
-    notes:"Order/membership placed Apr 9 via Whop; no further updates", source:"wdcardshop@gmail.com" },
+    notes:"Order #2000146-42675672; ordered Apr 13; $124.95; arrived Apr 22; card shop inventory", source:"darrenustaris@gmail.com" },
 
   { id:"walmart-darrenustaris-2026-03-26-tcg", retailer:"Walmart",
     item:"Pokemon Trading Card Game + 4 other items",
@@ -473,13 +411,7 @@ const SCRAPED = [
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
     notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"darrenustaris@gmail.com" },
 
-  { id:"walmart-darrenustaris-2026-04-13-scarlet", retailer:"Walmart",
-    item:"Pokemon Scarlet Violet 8.5 Prismatic Evolutions Poster Collection ×5",
-    qty:5, total:124.95, orderNum:"2000146-42675672", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
-    notes:"Order #2000146-42675672; ordered Apr 13; $124.95; arrived Apr 21; card shop inventory", source:"darrenustaris@gmail.com" },
-
-  // ===== NEW ENTRIES — darrenustaris3 (Walmart orders) =====
+  // ===== darrenustaris3 — Walmart orders =====
 
   { id:"walmart-darrenustaris3-2026-04-01-tcg", retailer:"Walmart",
     item:"Pokemon Trading Card Game + 4 other items",
@@ -523,7 +455,7 @@ const SCRAPED = [
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
     notes:"Ordered Apr 16; arrived Apr 21; card shop inventory", source:"darrenustaris3@gmail.com" },
 
-  // ===== NEW ENTRIES — darrenustaris2 (Walmart orders) =====
+  // ===== darrenustaris2 — Walmart orders =====
 
   { id:"walmart-darrenustaris2-2026-04-01-tcg", retailer:"Walmart",
     item:"Pokemon Trading Card Game + 4 other items",
@@ -549,7 +481,7 @@ const SCRAPED = [
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
     notes:"Arrived Apr 21; card shop inventory", source:"darrenustaris2@gmail.com" },
 
-  // ===== NEW ENTRIES — wdcardshop2 (Walmart orders) =====
+  // ===== wdcardshop2 — Walmart orders =====
 
   { id:"walmart-wdcardshop2-2026-04-01-tcg", retailer:"Walmart",
     item:"Pokemon Trading Card Game + 4 other items",
@@ -575,7 +507,7 @@ const SCRAPED = [
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
     notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"wdcardshop2@gmail.com" },
 
-  // ===== NEW ENTRIES — wdcardshop3 (Walmart orders) =====
+  // ===== wdcardshop3 — Walmart orders =====
 
   { id:"walmart-wdcardshop3-2026-03-31-tcg", retailer:"Walmart",
     item:"Pokemon Trading Card Game + 4 other items",
@@ -595,22 +527,22 @@ const SCRAPED = [
     tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, shipTo:"",
     notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"wdcardshop3@gmail.com" },
 
-  // ===== NEW ENTRIES — 2026-04-22 refresh =====
+  // ===== 2026-04-22 refresh =====
 
   { id:"walmart-2000145-70941286", retailer:"Walmart",
-    item:"Pokemon SV Prismatic Evolutions Elite Trainer Box ×5",
+    item:"Pokemon SV Prismatic Evolutions Elite Trainer Box x5",
     qty:5, total:382.65, orderNum:"2000145-70941286", status:"Cancelled", lastUpdate:"2026-04-22", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
     notes:"Cancelled; Order #2000145-70941286; $382.65; card shop inventory", source:"wdcardshop3@gmail.com" },
 
   { id:"walmart-2000144-10344198", retailer:"Walmart",
-    item:"Pokemon ME Ascended Heroes First Partners Deluxe Pin Collection ×5",
+    item:"Pokemon ME Ascended Heroes First Partners Deluxe Pin Collection x5",
     qty:5, total:296.95, orderNum:"2000144-10344198", status:"Cancelled", lastUpdate:"2026-04-22", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
     notes:"Cancelled; Order #2000144-10344198; $296.95; card shop inventory", source:"wdcardshop3@gmail.com" },
 
   { id:"walmart-2000146-91818849", retailer:"Walmart",
-    item:"Pokemon ME Ascended Heroes First Partners Deluxe Pin Collection ×5",
+    item:"Pokemon ME Ascended Heroes First Partners Deluxe Pin Collection x5",
     qty:5, total:296.95, orderNum:"2000146-91818849", status:"Cancelled", lastUpdate:"2026-04-22", eta:"",
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
     notes:"Cancelled; Order #2000146-91818849; $296.95; card shop inventory", source:"darrenustaris3@gmail.com" }
@@ -764,19 +696,19 @@ function render(){
   for (const o of rows){
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td data-label="Retailer" class="retailer">${esc(o.retailer)||'—'}</td>
-      <td data-label="Account"><span class="pill src" style="color:${srcColor(o.source||'')}" title="${esc(o.source||'')}">${esc(srcLabel(o.source||''))}</span></td>
-      <td data-label="Item">${esc(o.item)||'—'}</td>
-      <td data-label="Qty" class="mono">${o.qty==null||o.qty===''?'—':esc(o.qty)}</td>
-      <td data-label="Total" class="mono">${fmtMoney(o.total)}</td>
-      <td data-label="Order #" class="mono">${esc(o.orderNum)||'—'}</td>
-      <td data-label="Status">${statusPill(o.status, o)}</td>
-      <td data-label="Updated">${esc(o.lastUpdate)||'—'}</td>
-      <td data-label="ETA">${esc(o.eta)||'—'}</td>
-      <td data-label="Tracking">${o.tracking ? (o.trackingUrl ? `<a href="${esc(o.trackingUrl)}" target="_blank" rel="noopener" class="mono">${esc(o.tracking)}</a> <span class="desc">(${esc(o.carrier||'')})</span>` : `<span class="mono">${esc(o.tracking)}</span>`) : '—'}</td>
-      <td data-label="Ship To" class="desc" style="white-space:pre-line">${esc(o.shipTo)||'—'}</td>
-      <td data-label="Notes" class="desc">${esc(o.notes)||'—'}</td>
-      <td data-label="Actions">
+      <td class="retailer">${esc(o.retailer)||'—'}</td>
+      <td><span class="pill src" style="color:${srcColor(o.source||'')}" title="${esc(o.source||'')}">${esc(srcLabel(o.source||''))}</span></td>
+      <td>${esc(o.item)||'—'}</td>
+      <td class="mono">${o.qty==null||o.qty===''?'—':esc(o.qty)}</td>
+      <td class="mono">${fmtMoney(o.total)}</td>
+      <td class="mono">${esc(o.orderNum)||'—'}</td>
+      <td>${statusPill(o.status, o)}</td>
+      <td>${esc(o.lastUpdate)||'—'}</td>
+      <td>${esc(o.eta)||'—'}</td>
+      <td>${o.tracking ? (o.trackingUrl ? `<a href="${esc(o.trackingUrl)}" target="_blank" rel="noopener" class="mono">${esc(o.tracking)}</a> <span class="desc">(${esc(o.carrier||'')})</span>` : `<span class="mono">${esc(o.tracking)}</span>`) : '—'}</td>
+      <td class="desc" style="white-space:pre-line">${esc(o.shipTo)||'—'}</td>
+      <td class="desc">${esc(o.notes)||'—'}</td>
+      <td>
         <div class="row-actions">
           <button data-edit="${esc(o.id)}" title="Edit">✎</button>
           <button data-del="${esc(o.id)}" data-custom="${o._custom?1:0}" class="danger" title="Delete">🗑</button>
