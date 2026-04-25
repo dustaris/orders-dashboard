@@ -75,6 +75,33 @@
   .pill.src{background:rgba(255,255,255,.07);color:var(--muted);font-size:10px;letter-spacing:.1px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
   @media (max-width:900px){.cards{grid-template-columns:repeat(3,1fr)}}
   @media (max-width:760px){.cards{grid-template-columns:repeat(2,1fr)} .two{grid-template-columns:1fr}}
+  /* ── Mobile card view ───────────────────────────── */
+  .card-list{display:none;flex-direction:column;gap:10px}
+  .oc{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .oc-head{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
+  .oc-retailer{font-weight:600;font-size:14px;flex:1;line-height:1.3}
+  .oc-pills{display:flex;flex-wrap:wrap;gap:4px;align-items:center;flex-shrink:0}
+  .oc-item{font-size:13px;margin-bottom:6px;line-height:1.4}
+  .oc-meta{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12px;color:var(--muted)}
+  .oc-meta .kv b{color:var(--text);font-weight:500}
+  .oc-notes{margin-top:6px;font-size:12px;color:var(--muted);line-height:1.4;border-top:1px solid var(--line);padding-top:6px}
+  .oc-actions{display:flex;gap:6px;margin-top:8px;justify-content:flex-end}
+  .oc-actions button{padding:4px 10px;font-size:12px}
+  @media(max-width:640px){
+    .wrap{padding:12px 14px}
+    header{padding:14px 14px;gap:10px}
+    header h1{font-size:17px}
+    header .meta:last-child{display:none}
+    .cards{grid-template-columns:repeat(2,1fr);gap:8px}
+    .card .num{font-size:22px}
+    .toolbar{flex-direction:column;gap:8px}
+    .toolbar input[type=search],.toolbar select{min-width:0;width:100%}
+    .toolbar .spacer{display:none}
+    #tbl{display:none}
+    #empty{display:none}
+    .card-list{display:flex}
+    footer{padding:10px 14px}
+  }
 </style>
 </head>
 <body>
@@ -128,6 +155,7 @@
     <tbody id="tbody"></tbody>
   </table>
   <div id="empty" class="empty" style="display:none">No orders match.</div>
+  <div class="card-list" id="cardList"></div>
 </div>
 
 <footer>
@@ -665,6 +693,7 @@ function applyEdits(){
    ======================================================================= */
 let state = { filter:'all', q:'', retailer:'', account:'', sortKey:'lastUpdate', sortDir:-1 };
 const tbody = document.getElementById('tbody');
+const cardList = document.getElementById('cardList');
 const q = document.getElementById('q');
 const retailerSel = document.getElementById('retailer');
 const accountSel = document.getElementById('accountSel');
@@ -791,6 +820,45 @@ function render(){
   tbody.querySelectorAll('button[data-edit]').forEach(b =>
     b.addEventListener('click', () => openEdit(b.getAttribute('data-edit'))));
   tbody.querySelectorAll('button[data-del]').forEach(b =>
+    b.addEventListener('click', () => deleteRow(b.getAttribute('data-del'), b.getAttribute('data-custom')==='1')));
+
+  // ── Mobile card list ─────────────────────────────────
+  cardList.innerHTML = '';
+  if (!rows.length) {
+    cardList.innerHTML = '<div class="empty">No orders match.</div>';
+  } else {
+    for (const o of rows) {
+      const div = document.createElement('div');
+      div.className = 'oc';
+      const metaItems = [];
+      if (o.eta) metaItems.push(`<span class="kv"><b>ETA</b> ${esc(o.eta)}</span>`);
+      if (o.lastUpdate) metaItems.push(`<span class="kv"><b>Updated</b> ${esc(o.lastUpdate)}</span>`);
+      if (o.orderNum) metaItems.push(`<span class="kv"><b>Order #</b> ${esc(o.orderNum)}</span>`);
+      if (o.tracking) {
+        const trkHtml = o.trackingUrl
+          ? `<a href="${esc(o.trackingUrl)}" target="_blank" rel="noopener" class="mono">${esc(o.carrier||o.tracking)}</a>`
+          : `<span class="mono">${esc(o.carrier||o.tracking)}</span>`;
+        metaItems.push(`<span class="kv"><b>Tracking</b> ${trkHtml}</span>`);
+      }
+      div.innerHTML = `
+        <div class="oc-head">
+          <div class="oc-retailer">${esc(o.retailer)||'—'}</div>
+          <div class="oc-pills">${statusPill(o.status, o)}</div>
+        </div>
+        <div class="oc-item">${esc(o.item)||'—'}</div>
+        ${metaItems.length ? `<div class="oc-meta">${metaItems.join('')}</div>` : ''}
+        ${o.notes ? `<div class="oc-notes">${esc(o.notes)}</div>` : ''}
+        <div class="oc-actions">
+          <button data-edit="${esc(o.id)}" title="Edit">✎ Edit</button>
+          <button data-del="${esc(o.id)}" data-custom="${o._custom?1:0}" class="danger" title="Delete">🗑</button>
+        </div>
+      `;
+      cardList.appendChild(div);
+    }
+  }
+  cardList.querySelectorAll('button[data-edit]').forEach(b =>
+    b.addEventListener('click', () => openEdit(b.getAttribute('data-edit'))));
+  cardList.querySelectorAll('button[data-del]').forEach(b =>
     b.addEventListener('click', () => deleteRow(b.getAttribute('data-del'), b.getAttribute('data-custom')==='1')));
 }
 
