@@ -593,20 +593,6 @@ const SCRAPED = [
     tracking:"", carrier:"", trackingUrl:"", stale:false, shipTo:"",
     notes:"Order confirmed Apr 24; tracking to follow", source:"wdcardshop@gmail.com" },
 
-  { id:"shopify-wdcardshop-1232", retailer:"WD Card Shop (sale)",
-    item:"Prismatic Evolutions Surprise Box \u00d7 36",
-    qty:36, total:1871.64, orderNum:"1232", status:"Ordered", lastUpdate:"2026-04-24", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false,
-    shipTo:"Kimberly Felkar\n47 Echo Ave unit 889\nMiller Place, NY 11764",
-    notes:"Customer order placed Apr 24 5:50am; free shipping FREESHIP; needs fulfillment", source:"wdcardshop@gmail.com" },
-
-  { id:"shopify-wdcardshop-1231", retailer:"WD Card Shop (sale)",
-    item:"Ascended Heroes Premium Poster Collection Case - Sealed",
-    qty:1, total:827.45, orderNum:"1231", status:"Ordered", lastUpdate:"2026-04-22", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false,
-    shipTo:"Erielle Fernandez\n67-50 Thornton Place, L3\nQueens, NY 11375",
-    notes:"Customer order #1231 placed Apr 22 9:16am; $760 + $67.45 tax; free shipping FREESHIP; needs fulfillment", source:"wdcardshop@gmail.com" },
-
   { id:"target-102003309454336", retailer:"Target",
     item:"Pok\u00e9mon TCG Mega Evolution Chaos Rising Booster Bundle \u00d7 2",
     qty:2, total:65.98, orderNum:"102003309454336", status:"Cancelled", lastUpdate:"2026-04-24", eta:"",
@@ -641,7 +627,7 @@ const STORAGE_KEY = "ordersDashboard.edits.v1";
 // Seeded by the daily refresh from order_edits.json (if present on disk).
 // Used only when this browser's localStorage is empty.
 /* --- SEED_START --- */
-const SEED_EDITS = { "overrides":{"theboxery-617957":{"retailer":"The Boxery","orderNum":"617957","item":"Glenwood Packaging materials","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-04-13","eta":"","carrier":"","tracking":"","trackingUrl":"","shipTo":"","notes":"Apr 2026 Glenwood Packaging; shipped Apr 13; no delivery confirmation"},"fedex-870425132207":{"retailer":"FedEx shipment (unknown sender)","orderNum":"","item":"Package via FedEx","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-04-08","eta":"","carrier":"FedEx","tracking":"870425132207","trackingUrl":"https://www.fedex.com/fedextrack/?trknbr=870425132207","shipTo":"","notes":"FedEx received package Apr 8; delivery date TBD at time of email; likely delivered"},"theboxery-613322":{"retailer":"The Boxery","orderNum":"613322","item":"Packaging materials (Mar 2026 Order 2)","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-03-30","eta":"","carrier":"","tracking":"","trackingUrl":"","shipTo":"","notes":"Shipped Mar 30; no delivery confirmation; likely delivered"},"theboxery-613026":{"retailer":"The Boxery","orderNum":"613026","item":"Packaging materials (Mar 2026 SoCal)","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-03-27","eta":"","carrier":"","tracking":"","trackingUrl":"","shipTo":"","notes":"Shipped Mar 27; no delivery confirmation; likely delivered"}},"additions":[],"deletions":["tcgplayer-jirachi-xy67a","la28-391117188","la28-391117453","ring-011-10490988","usps-9341920111411216501947","usps-9400140109627774729627","walmart-darrenustaris-2026-04-crystal-geyser","pokesignals-2026-04-09","pokemoncenter-2026-04-13"] };
+const SEED_EDITS = { "overrides":{"theboxery-617957":{"retailer":"The Boxery","orderNum":"617957","item":"Glenwood Packaging materials","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-04-13","eta":"","carrier":"","tracking":"","trackingUrl":"","shipTo":"","notes":"Apr 2026 Glenwood Packaging; shipped Apr 13; no delivery confirmation"},"fedex-870425132207":{"retailer":"FedEx shipment (unknown sender)","orderNum":"","item":"Package via FedEx","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-04-08","eta":"","carrier":"FedEx","tracking":"870425132207","trackingUrl":"https://www.fedex.com/fedextrack/?trknbr=870425132207","shipTo":"","notes":"FedEx received package Apr 8; delivery date TBD at time of email; likely delivered"},"theboxery-613322":{"retailer":"The Boxery","orderNum":"613322","item":"Packaging materials (Mar 2026 Order 2)","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-03-30","eta":"","carrier":"","tracking":"","trackingUrl":"","shipTo":"","notes":"Shipped Mar 30; no delivery confirmation; likely delivered"},"theboxery-613026":{"retailer":"The Boxery","orderNum":"613026","item":"Packaging materials (Mar 2026 SoCal)","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-03-27","eta":"","carrier":"","tracking":"","trackingUrl":"","shipTo":"","notes":"Shipped Mar 27; no delivery confirmation; likely delivered"}},"additions":[],"deletions":["tcgplayer-jirachi-xy67a","la28-391117188","la28-391117453","ring-011-10490988","usps-9341920111411216501947","usps-9400140109627774729627","walmart-darrenustaris-2026-04-crystal-geyser","pokesignals-2026-04-09","pokemoncenter-2026-04-13","shopify-wdcardshop-1231","shopify-wdcardshop-1232"] };
 /* --- SEED_END --- */
 
 const EDITS = loadEdits();
