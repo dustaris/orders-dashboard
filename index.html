@@ -108,7 +108,7 @@
 <body>
 <header>
   <div>
-    <div class="meta">Snapshot: <span id="snapshot">2026-04-28</span> · Source: <span id="accountList">wdcardshop</span> (last 32 days)</div>
+    <div class="meta">Snapshot: <span id="snapshot">2026-04-28</span> · Source: <span id="accountList">darrenustaris · darrenustaris2 · darrenustaris3 · wd.cardshop01 · wdcardshop · wdcardshop2 · wdcardshop3 · wdcardshop5</span> (last 32 days)</div>
   </div>
 </header>
 
@@ -1889,10 +1889,11 @@ function loadEdits(){
 function saveEdits(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(EDITS)); }
 
 function applyEdits(){
-  // 1. drop deletions; 2. apply overrides; 3. append additions
+  // 1. drop deletions; 2. drop outgoing sales; 3. apply overrides; 4. append additions
   const deleted = new Set(EDITS.deletions);
   const scraped = SCRAPED
     .filter(o => !deleted.has(o.id))
+    .filter(o => !(o.retailer||'').toLowerCase().includes('(sale)'))
     .map(o => {
       const ov = EDITS.overrides[o.id];
       if(!ov) return { ...o, _edited:false, _custom:false };
