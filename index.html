@@ -1867,7 +1867,7 @@ const STORAGE_KEY = "ordersDashboard.edits.v1";
 // Seeded by the daily refresh from order_edits.json (if present on disk).
 // Used only when this browser's localStorage is empty.
 /* --- SEED_START --- */
-{
+const SEED_EDITS = {
   "overrides": {
     "theboxery-617957": {
       "retailer": "The Boxery",
@@ -1944,7 +1944,7 @@ const STORAGE_KEY = "ordersDashboard.edits.v1";
     "pokemoncenter-2026-04-13",
     "walmart-2000147-82903687"
   ]
-}
+};
 /* --- SEED_END --- */
 
 const EDITS = loadEdits();
