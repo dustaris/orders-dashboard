@@ -8,7 +8,7 @@
   :root{
     --bg:#0f1115; --panel:#161a22; --panel-2:#1c2230; --text:#e8ecf3; --muted:#8a93a6;
     --accent:#7c9cff; --ok:#2ecc71; --warn:#f1c40f; --transit:#5dade2; --ordered:#b48cff;
-    --danger:#e74c3c; --line:#262c3a;
+    --danger:#e74c3c; --cancelled:#e67e22; --line:#262c3a;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
@@ -16,7 +16,7 @@
   header h1{margin:0;font-size:20px;font-weight:600;letter-spacing:.2px}
   header .meta{color:var(--muted);font-size:12px}
   .wrap{padding:20px 28px}
-  .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+  .cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:18px}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;transition:border-color .15s}
   .card:hover{border-color:#3a4763}
   .card.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(124,156,255,.18) inset}
@@ -26,6 +26,7 @@
   .card.ordered .num{color:var(--ordered)}
   .card.transit .num{color:var(--transit)}
   .card.delivered .num{color:var(--ok)}
+  .card.cancelled .num{color:var(--cancelled)}
   .toolbar{display:flex;gap:10px;align-items:center;margin:10px 0 14px;flex-wrap:wrap}
   .toolbar input, .toolbar select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;min-width:220px}
   .toolbar .spacer{flex:1}
@@ -45,6 +46,7 @@
   .pill.ordered{background:rgba(180,140,255,.15);color:var(--ordered)}
   .pill.transit{background:rgba(93,173,226,.15);color:var(--transit)}
   .pill.delivered{background:rgba(46,204,113,.15);color:var(--ok)}
+  .pill.cancelled{background:rgba(230,126,34,.15);color:var(--cancelled)}
   .pill.stale{background:rgba(241,196,15,.15);color:var(--warn)}
   .pill.edited{background:rgba(124,156,255,.15);color:var(--accent)}
   .pill.custom{background:rgba(231,76,60,.15);color:#ffb0a8}
@@ -71,16 +73,43 @@
   .toast{position:fixed;bottom:20px;right:20px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;opacity:0;transform:translateY(6px);transition:all .18s;z-index:60}
   .toast.show{opacity:1;transform:none}
   .pill.src{background:rgba(255,255,255,.07);color:var(--muted);font-size:10px;letter-spacing:.1px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+  @media (max-width:900px){.cards{grid-template-columns:repeat(3,1fr)}}
   @media (max-width:760px){.cards{grid-template-columns:repeat(2,1fr)} .two{grid-template-columns:1fr}}
+  /* ── Mobile card view ───────────────────────────── */
+  .card-list{display:none;flex-direction:column;gap:10px}
+  .oc{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .oc-head{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
+  .oc-retailer{font-weight:600;font-size:14px;flex:1;line-height:1.3}
+  .oc-pills{display:flex;flex-wrap:wrap;gap:4px;align-items:center;flex-shrink:0}
+  .oc-item{font-size:13px;margin-bottom:6px;line-height:1.4}
+  .oc-meta{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12px;color:var(--muted)}
+  .oc-meta .kv b{color:var(--text);font-weight:500}
+  .oc-notes{margin-top:6px;font-size:12px;color:var(--muted);line-height:1.4;border-top:1px solid var(--line);padding-top:6px}
+  .oc-actions{display:flex;gap:6px;margin-top:8px;justify-content:flex-end}
+  .oc-actions button{padding:4px 10px;font-size:12px}
+  @media(max-width:640px){
+    .wrap{padding:12px 14px}
+    header{padding:14px 14px;gap:10px}
+    header h1{font-size:17px}
+    header .meta:last-child{display:none}
+    .cards{grid-template-columns:repeat(2,1fr);gap:8px}
+    .card .num{font-size:22px}
+    .toolbar{flex-direction:column;gap:8px}
+    .toolbar input[type=search],.toolbar select{min-width:0;width:100%}
+    .toolbar .spacer{display:none}
+    #addBtn,#exportBtn,#importBtn,#resetBtn{display:none}
+    #tbl{display:none}
+    #empty{display:none}
+    .card-list{display:flex}
+    footer{padding:10px 14px}
+  }
 </style>
 </head>
 <body>
 <header>
   <div>
-    <h1>Orders Dashboard</h1>
-    <div class="meta">Snapshot: <span id="snapshot"></span> · Source: <span id="accountList">multiple Gmail accounts</span> (last 30 days)</div>
+    <div class="meta">Snapshot: <span id="snapshot">2026-04-30</span> · Source: <span id="accountList">wdcardshop</span> (last 32 days)</div>
   </div>
-  <div class="meta">Click a card to filter · Headers sort · Pencil/trash edits · Use Export to save edits for the daily refresh</div>
 </header>
 
 <div class="wrap">
@@ -89,6 +118,7 @@
     <div class="card ordered" data-filter="Ordered"><div class="label">Ordered</div><div class="num" id="c-ordered">0</div></div>
     <div class="card transit" data-filter="In Transit"><div class="label">In Transit</div><div class="num" id="c-transit">0</div></div>
     <div class="card delivered" data-filter="Delivered"><div class="label">Delivered</div><div class="num" id="c-delivered">0</div></div>
+    <div class="card cancelled" data-filter="Cancelled"><div class="label">Cancelled</div><div class="num" id="c-cancelled">0</div></div>
   </div>
 
   <div class="toolbar">
@@ -124,6 +154,7 @@
     <tbody id="tbody"></tbody>
   </table>
   <div id="empty" class="empty" style="display:none">No orders match.</div>
+  <div class="card-list" id="cardList"></div>
 </div>
 
 <footer>
@@ -150,6 +181,7 @@
             <option>Ordered</option>
             <option>In Transit</option>
             <option>Delivered</option>
+            <option>Cancelled</option>
           </select>
         </label>
         <label>Last update<input id="f-lastUpdate" type="date" /></label>
@@ -179,88 +211,1649 @@
    ======================================================================= */
 /* --- SCRAPED_START --- */
 const SCRAPED = [
-  { id:"ring-011-10490988", retailer:"Ring", item:"Ring order (details in email)", qty:null, total:null,
-    orderNum:"011-10490988", status:"Ordered", lastUpdate:"2026-04-21", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+  // ===== WDCARDSHOP — INBOUND INVENTORY ORDERS =====
 
-  { id:"walmart-2026-04-15-pokemon-scarlet", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
-    qty:5, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-21",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+  { id:"acd-2026-04-26-supplies", retailer:"ACD Distribution",
+    item:"DP Premium Card Sleeves (100) ×130 + Semi-Rigid Tall Card Holders (200) ×30 + Toploaders 3×4 Hard Sleeves Premium (25) ×90",
+    qty:250, total:1095.6, orderNum:"83685", status:"Delivered", lastUpdate:"2026-04-29", eta:"2026-04-29",
+    tracking:"1Z90V1520392443665", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z90V1520392443665",
+    stale:false, shipTo:"",
+    notes:"ACD order summary (cust #83685) dated 4-27-2026; $1095.60; 5 packages shipped Apr 28; delivered Apr 29 3:25 PM (ACD DISTRIBUTION-WEST via UPS); Thomas approved shipment Apr 26; free shipping", source:"wdcardshop@gmail.com" },
 
-  { id:"usps-9341920111411216501947", retailer:"Amazon (via USPS)", item:"Amazon package",
+  { id:"acd-2026-04-24", retailer:"ACD Distribution",
+    item:"ACD Distribution order (awaiting shipment)",
+    qty:null, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-24", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Order confirmed Apr 24; tracking to follow", source:"wdcardshop@gmail.com" },
+
+  { id:"acd-2026-04-19", retailer:"ACD Distribution",
+    item:"ACD Distribution order (awaiting shipment)",
+    qty:null, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-19", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"Order placed Apr 19; tracking to follow; no shipment confirmation yet", source:"wdcardshop@gmail.com" },
+
+  { id:"ups-1ZRW55790396623610", retailer:"ACD Distribution",
+    item:"ACD Distribution inventory order",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-20", eta:"2026-04-20",
-    tracking:"9341920111411216501947", carrier:"USPS",
-    trackingUrl:"https://tools.usps.com/go/TrackConfirmAction?tLabels=9341920111411216501947",
-    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Shipped from Amazon · Out for delivery Apr 20 by 3:50pm" , source:"darrenustaris@gmail.com" },
+    tracking:"1ZRW55790396623610", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1ZRW55790396623610",
+    stale:false, shipTo:"",
+    notes:"Shipped Apr 14; delivered Apr 20 3:41 PM", source:"wdcardshop@gmail.com" },
 
-  { id:"usps-9400140109627774729627", retailer:"Pitney Bowes GEC (via USPS)",
-    item:"International package (often eBay/Etsy)", qty:null, total:null,
-    orderNum:"", status:"Delivered", lastUpdate:"2026-04-20", eta:"2026-04-20",
-    tracking:"9400140109627774729627", carrier:"USPS",
-    trackingUrl:"https://tools.usps.com/go/TrackConfirmAction?tLabels=9400140109627774729627",
-    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Out for delivery Apr 20 by 3:50pm · Delivered per user confirmation" , source:"darrenustaris@gmail.com" },
+  { id:"ups-1Z5F23380317923534", retailer:"ACD Distribution",
+    item:"ACD Distribution inventory order (3 packages)",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-18", eta:"2026-04-18",
+    tracking:"1Z5F23380317923534", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5F23380317923534",
+    stale:false, shipTo:"",
+    notes:"3 packages shipped Apr 15–16; also 1Z5F23380303357753 & 1Z5F23380306299347; delivered Apr 18 9:42 AM", source:"wdcardshop@gmail.com" },
 
-  { id:"walmart-2026-04-15-pokemon-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game",
-    qty:1, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-15", eta:"2026-04-18",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:true, notes:"" , source:"darrenustaris@gmail.com" },
+  { id:"goldriverdistributors-8961", retailer:"Gold River Distributors",
+    item:"Gold River inventory order (Pokemon ME Ascended Heroes + First Partner Illustration Collection)",
+    qty:null, total:2431.58, orderNum:"8961", status:"Delivered", lastUpdate:"2026-04-17", eta:"2026-04-17",
+    tracking:"1Z5X74750344677053", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750344677053",
+    stale:false, shipTo:"",
+    notes:"Paid $2405.20 + $26.38 on Apr 16; 2 UPS shipments (also 1Z5X74750345171463); delivered Apr 17", source:"wdcardshop@gmail.com" },
 
-  { id:"shopify-RPL6083", retailer:"Reformed Poke Lab", item:"Pokemon Perfect Order Booster Box",
-    qty:12, total:2230.00, orderNum:"RPL6083", status:"Delivered", lastUpdate:"2026-04-15", eta:"",
+  { id:"ups-1Z90V1520396148290", retailer:"ACD Distribution (West)",
+    item:"ACD Distribution West inventory order (3 packages)",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-15", eta:"2026-04-15",
+    tracking:"1Z90V1520396148290", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z90V1520396148290",
+    stale:false, shipTo:"",
+    notes:"3 packages shipped Apr 14; also 1Z90V1520398302510 & 1Z90V1520399961904; delivered Apr 15 10:34 AM", source:"wdcardshop@gmail.com" },
+
+  { id:"goldriverdistributors-8896", retailer:"Gold River Distributors",
+    item:"Gold River inventory order",
+    qty:null, total:4838.0, orderNum:"8896", status:"Delivered", lastUpdate:"2026-04-15", eta:"2026-04-15",
+    tracking:"1Z5X74750344502179", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750344502179",
+    stale:false, shipTo:"",
+    notes:"Paid $4838 on Apr 14; confirmed Apr 13–14; also 1Z5X74750343679008; delivered Apr 15", source:"wdcardshop@gmail.com" },
+
+  { id:"ups-1Z5X74750345766982", retailer:"Gold River Distributors",
+    item:"Gold River inventory order",
+    qty:null, total:4463.16, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"1Z5X74750345766982", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750345766982",
+    stale:false, shipTo:"",
+    notes:"Paid $4463.16 on Apr 9; UPS ship notification Apr 9, ETA Apr 10; presumed delivered", source:"wdcardshop@gmail.com" },
+
+  { id:"goldriverdistributors-8685", retailer:"Gold River Distributors",
+    item:"Gold River inventory order",
+    qty:null, total:null, orderNum:"8685", status:"Delivered", lastUpdate:"2026-04-03", eta:"2026-04-03",
+    tracking:"1Z5X74750343016287", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750343016287",
+    stale:false, shipTo:"",
+    notes:"Confirmed & paid ~Apr 2; delivered Apr 3", source:"wdcardshop@gmail.com" },
+
+  { id:"goldriverdistributors-8672", retailer:"Gold River Distributors",
+    item:"Gold River inventory order",
+    qty:null, total:298.08, orderNum:"8672", status:"Delivered", lastUpdate:"2026-04-03", eta:"2026-04-03",
+    tracking:"1Z5X74750344141907", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750344141907",
+    stale:false, shipTo:"",
+    notes:"Paid $298.08 on Apr 2; delivered Apr 3", source:"wdcardshop@gmail.com" },
+
+  { id:"theboxery-617957", retailer:"The Boxery",
+    item:"Glenwood Packaging materials",
+    qty:null, total:null, orderNum:"617957", status:"Delivered", lastUpdate:"2026-04-13", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Apr 2026 Glenwood Packaging; shipped Apr 13; no delivery confirmation", source:"wdcardshop@gmail.com" },
+
+  { id:"theboxery-613322", retailer:"The Boxery",
+    item:"Packaging materials (Mar 2026 Order 2)",
+    qty:null, total:null, orderNum:"613322", status:"Delivered", lastUpdate:"2026-03-30", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Shipped Mar 30; no delivery confirmation; likely delivered", source:"wdcardshop@gmail.com" },
+
+  { id:"theboxery-613026", retailer:"The Boxery",
+    item:"Packaging materials (Mar 2026 SoCal)",
+    qty:null, total:null, orderNum:"613026", status:"Delivered", lastUpdate:"2026-03-27", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Shipped Mar 27; no delivery confirmation; likely delivered", source:"wdcardshop@gmail.com" },
+
+  { id:"fedex-870425132207", retailer:"FedEx shipment (unknown sender)",
+    item:"Package via FedEx",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-08", eta:"",
+    tracking:"870425132207", carrier:"FedEx",
+    trackingUrl:"https://www.fedex.com/fedextrack/?trknbr=870425132207",
+    stale:false, shipTo:"",
+    notes:"FedEx received package Apr 8; delivery date TBD at time of email; likely delivered", source:"wdcardshop@gmail.com" },
+
+  { id:"walmart-wdcardshop-2026-04-06", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-06", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"ETA Apr 10; shipped Apr 6; card shop inventory", source:"wdcardshop@gmail.com" },
+
+  { id:"walmart-wdcardshop-2026-04-04", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-04", eta:"2026-04-09",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"ETA Apr 9; shipped Apr 4; card shop inventory", source:"wdcardshop@gmail.com" },
+
+  { id:"walmart-wdcardshop-2026-04-02", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-02", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"ETA Apr 7; shipped Apr 2; card shop inventory", source:"wdcardshop@gmail.com" },
+
+  { id:"walmart-wdcardshop-2026-04-01", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-01", eta:"2026-04-06",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"ETA Apr 6; shipped Apr 1; card shop inventory", source:"wdcardshop@gmail.com" },
+
+  { id:"premiumbandai-1000535861", retailer:"Premium Bandai",
+    item:"ONE PIECE CARD GAME English Version 3rd Anniversary Set",
+    qty:1, total:141.25, orderNum:"1000535861", status:"Ordered", lastUpdate:"2026-03-30", eta:"2026-09-01",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"September 2026 delivery; paid MasterCard $120 + $10 shipping + $11.25 tax; forwarded from wdcardshop2@gmail.com", source:"wdcardshop@gmail.com" },
+
+  // ===== PERSONAL (darrenustaris) =====
+
+  { id:"amazon-jp-249-2441003-4375816", retailer:"Amazon.co.jp",
+    item:"ONE PIECE CHOPPER’s 1 (Jump Comics)",
+    qty:3, total:60.36, orderNum:"249-2441003-4375816", status:"In Transit", lastUpdate:"2026-04-23", eta:"2026-05-04",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Thomas Lau\n1311 Glenwood Ave\nSan Jose, CA 95125",
+    notes:"Order #249-2441003-4375816; $60.36; ETA May 4; darrenustaris account; Amazon.co.jp import", source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-2026-04-15-pokemon-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Shipped Apr 16; arrived Apr 21; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-2026-04-15-pokemon-tcg", retailer:"Walmart",
+    item:"Pokemon TCG Phantasmal Flames Elite Trainer Box",
+    qty:1, total:69.99, orderNum:"2000147-13448180", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-18",
+    tracking:"1ZHE53840330173603", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1ZHE53840330173603",
+    stale:false, shipTo:"21995 Bellcroft Dr, Lake Forest, CA 92630",
+    notes:"Shipped Apr 15 via UPS; arrived Apr 21; ordered Apr 13", source:"darrenustaris@gmail.com" },
+
+  { id:"shopify-RPL6083", retailer:"Reformed Poke Lab",
+    item:"Pokemon Perfect Order Booster Box",
+    qty:12, total:2230.0, orderNum:"RPL6083", status:"Delivered", lastUpdate:"2026-04-15", eta:"",
     tracking:"1ZC1B491YW63031983", carrier:"UPS",
     trackingUrl:"https://www.ups.com/track?tracknum=1ZC1B491YW63031983",
-    stale:false, shipTo:"Thomas Lau\n1311 Glenwood Ave\nSan Jose, CA 95125", notes:"" , source:"darrenustaris@gmail.com" },
+    stale:false, shipTo:"Thomas Lau\n1311 Glenwood Ave\nSan Jose, CA 95125",
+    notes:"", source:"darrenustaris@gmail.com" },
 
-  { id:"pokemoncenter-2026-04-14", retailer:"Pokémon Center", item:"Pokémon Center order",
+  { id:"pokemoncenter-2026-04-14", retailer:"Pokémon Center",
+    item:"Pokémon Center order",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-14", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"", source:"darrenustaris@gmail.com" },
 
-  { id:"usps-9400136208235344766045", retailer:"Descartes Systems (via USPS)",
-    item:"Package via USPS", qty:null, total:null, orderNum:"", status:"Delivered",
-    lastUpdate:"2026-04-13", eta:"2026-04-13",
-    tracking:"9400136208235344766045", carrier:"USPS",
-    trackingUrl:"https://tools.usps.com/go/TrackConfirmAction?tLabels=9400136208235344766045",
-    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Shipped from The Descartes Systems Group Inc · Expected by Apr 13" , source:"darrenustaris@gmail.com" },
-
-  { id:"walmart-2026-04-07-pokemon-scarlet", retailer:"Walmart", item:"Pokemon Scarlet & Violet + 4 other items",
+  { id:"walmart-2026-04-07-pokemon-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
     qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"", source:"darrenustaris@gmail.com" },
 
-  { id:"la28-391117453", retailer:"LA28 Olympics", item:"Olympic Ticket Order",
-    qty:null, total:null, orderNum:"391117453", status:"Ordered", lastUpdate:"2026-04-07", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"Forwarded from Reyn Teranishi" , source:"darrenustaris@gmail.com" },
-
-  { id:"la28-391117188", retailer:"LA28 Olympics",
-    item:"ATH15 Athletics (Track & Field) Mixed Final — Cat D ×2",
-    qty:2, total:2232.54, orderNum:"391117188", status:"Ordered", lastUpdate:"2026-04-07", eta:"",
-    tracking:"", carrier:"", trackingUrl:"",
-    stale:false, notes:"Sat 07.22.2028 · LA Memorial Coliseum · Digital delivery · Paid by Jamie Mangan (VISA)" , source:"darrenustaris@gmail.com" },
-
-  { id:"walmart-2026-04-06-pokemon-tcg", retailer:"Walmart", item:"Pokemon Trading Card Game + 4 other items",
+  { id:"walmart-2026-04-06-pokemon-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
     qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-06", eta:"",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"", source:"darrenustaris@gmail.com" },
 
-  { id:"usps-9261290326130777608955", retailer:"USPS shipment (unknown)",
-    item:"Package via USPS", qty:null, total:null, orderNum:"", status:"Delivered",
-    lastUpdate:"2026-04-03", eta:"2026-04-03",
-    tracking:"9261290326130777608955", carrier:"USPS",
-    trackingUrl:"https://tools.usps.com/go/TrackConfirmAction?tLabels=9261290326130777608955",
-    stale:false, shipTo:"Lake Forest, CA 92630", notes:"Out for delivery Apr 3 by 3:35pm" , source:"darrenustaris@gmail.com" },
-
-  { id:"dsg-2026-03-31", retailer:"Dick's Sporting Goods", item:"Package delivered",
+  { id:"dsg-2026-03-31", retailer:"Dick's Sporting Goods",
+    item:"Package delivered",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-31", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"", source:"darrenustaris@gmail.com" },
 
-  { id:"tcgplayer-jirachi-xy67a", retailer:"TCGplayer", item:"Jirachi - XY67a",
-    qty:1, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-03-26", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:true, notes:"Paid MASTERCARD" , source:"darrenustaris@gmail.com" },
-
-  { id:"pokemoncenter-2026-03-25", retailer:"Pokémon Center", item:"Pokémon Center order (shipped)",
+  { id:"pokemoncenter-2026-03-25", retailer:"Pokémon Center",
+    item:"Pokémon Center order (shipped)",
     qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-25", eta:"",
-    tracking:"", carrier:"", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" },
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"", source:"darrenustaris@gmail.com" },
 
-  { id:"walmart-2026-03-24-crystal-geyser", retailer:"Walmart", item:"Crystal Geyser Alpine + 13 other items",
-    qty:14, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-24", eta:"",
-    tracking:"", carrier:"Walmart", trackingUrl:"", stale:false, notes:"" , source:"darrenustaris@gmail.com" }
+  // ===== darrenustaris3 =====
+
+  { id:"walmart-2026-03-25-pokemon-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-25", eta:"",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Package arrived Mar 25; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-2026-04-02-canceled-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-02", eta:"",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Cancelled Apr 2 — not charged; delivery cancellation", source:"darrenustaris3@gmail.com" },
+
+  // ===== wd.cardshop01 =====
+
+  { id:"walmart-wdcardshop01-2026-04-14-canceled", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-14", eta:"",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Cancelled Apr 14 — policy flag; not charged", source:"wd.cardshop01@gmail.com" },
+
+  // ===== wdcardshop5 =====
+
+  { id:"walmart-wdcardshop5-2026-04-13-canceled", retailer:"Walmart",
+    item:"Pokemon TCG Phantasmal Flames Booster Bundle",
+    qty:5, total:219.95, orderNum:"2000143-05172119", status:"Cancelled", lastUpdate:"2026-04-21", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"1473 Graywood Drive Rm 2, San Jose, CA 95129",
+    notes:"Cancelled — policy flag; Order# 2000143-05172119; $219.95; not charged; ordered Apr 13, ETA Apr 20; card shop inventory", source:"wdcardshop5@gmail.com" },
+
+  // ===== wdcardshop2 =====
+
+  { id:"walmart-wdcardshop2-2026-04-15-scarlet", retailer:"Walmart",
+    item:"Pokemon SV8.5 Prismatic Evolutions Poster Collection x5",
+    qty:5, total:null, orderNum:"2000144-86487663", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"1ZHE53840330226494", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1ZHE53840330226494",
+    stale:false, shipTo:"",
+    notes:"Order #2000144-86487663; shipped Apr 15 via UPS; arrived Apr 21; card shop inventory", source:"wdcardshop2@gmail.com" },
+
+  { id:"walmart-wdcardshop2-2026-04-canceled-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-15", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Cancelled — not charged; card shop inventory", source:"wdcardshop2@gmail.com" },
+
+  // ===== wdcardshop3 =====
+
+  { id:"walmart-wdcardshop3-2026-04-15-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Shipped Apr 15; arrived Apr 21; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  { id:"walmart-wdcardshop3-2026-04-canceled-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-15", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Cancelled — policy flag; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  { id:"walmart-wdcardshop3-2026-04-canceled-tcg-issue", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-15", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Cancelled — unexpected issue; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  { id:"walmart-wdcardshop3-2026-04-canceled-tcg-qty", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Cancelled", lastUpdate:"2026-04-15", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Cancelled — exceeded quantity limit; not charged; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  // ===== darrenustaris — Walmart orders =====
+
+  { id:"walmart-darrenustaris-2026-04-13-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet Violet 8.5 Prismatic Evolutions Poster Collection x5",
+    qty:5, total:124.95, orderNum:"2000146-42675672", status:"Delivered", lastUpdate:"2026-04-22", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Order #2000146-42675672; ordered Apr 13; $124.95; arrived Apr 22; card shop inventory", source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-darrenustaris-2026-03-26-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-03-27", eta:"2026-03-27",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Mar 26; ETA Mar 27; delivered; card shop inventory", source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-darrenustaris-2026-04-05-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-darrenustaris-2026-03-26-tcg-b", retailer:"Walmart",
+    item:"Pokemon Trading Card Games Mega Evolution Perfect Order Booster Bundle x5",
+    qty:5, total:149.85, orderNum:"2000143-21483910", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"1311 Glenwood Ave., San Jose, CA 95125",
+    notes:"Order #2000143-21483910; ordered Mar 26; $149.85; ETA Apr 10; MC ending 3013; card shop inventory", source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-darrenustaris-2026-03-26-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet Violet Prismatic Evolutions Elite Trainer Box x5",
+    qty:5, total:349.85, orderNum:"2000144-59928017", status:"Delivered", lastUpdate:"2026-04-08", eta:"2026-04-08",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"1311 Glenwood Ave., San Jose, CA 95125",
+    notes:"Order #2000144-59928017; ordered Mar 26; $349.85; ETA Apr 8; MC ending 3013; card shop inventory", source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-darrenustaris-2026-03-26-tcg-c", retailer:"Walmart",
+    item:"Pokemon Trading Card Games Mega Evolutions 3 Perfect Order 3Pk Blister x5",
+    qty:5, total:79.85, orderNum:"2000144-07381966", status:"Delivered", lastUpdate:"2026-04-07", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"1311 Glenwood Ave., San Jose, CA 95125",
+    notes:"Order #2000144-07381966; ordered Mar 26; $79.85; ETA Apr 7; MC ending 3013; card shop inventory", source:"darrenustaris@gmail.com" },
+
+  { id:"walmart-darrenustaris-2026-04-01-tcg-cancelled", retailer:"Walmart",
+    item:"Pokemon Trading Card Games Mega Evolution Ascended Heroes First Partners Deluxe Pin Collection x5",
+    qty:5, total:269.95, orderNum:"2000144-10344197", status:"Cancelled", lastUpdate:"2026-04-21", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Order #2000144-10344197; ordered Apr 1; $269.95; canceled — not charged; MC ending 3013; darrenustaris account", source:"darrenustaris@gmail.com" },
+
+  // ===== darrenustaris3 — Walmart orders =====
+
+  { id:"walmart-darrenustaris3-2026-04-01-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-06", eta:"2026-04-06",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 1; ETA Apr 6; delivered; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-darrenustaris3-2026-04-01-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 1; ETA Apr 7; delivered; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-darrenustaris3-2026-04-05-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-darrenustaris3-2026-04-16-tcg-a", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 16; arrived Apr 21; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-darrenustaris3-2026-04-16-tcg-b", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 16; arrived Apr 21; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-darrenustaris3-2026-04-16-tcg-c", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 16; arrived Apr 21; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  { id:"walmart-darrenustaris3-2026-04-16-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 16; arrived Apr 21; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  // ===== darrenustaris2 — Walmart orders =====
+
+  { id:"walmart-darrenustaris2-2026-04-01-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 1; ETA Apr 7; delivered; card shop inventory", source:"darrenustaris2@gmail.com" },
+
+  { id:"walmart-darrenustaris2-2026-04-01-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 1; ETA Apr 7; delivered; card shop inventory", source:"darrenustaris2@gmail.com" },
+
+  { id:"walmart-darrenustaris2-2026-04-04-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-09", eta:"2026-04-09",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 4; ETA Apr 9; delivered; card shop inventory", source:"darrenustaris2@gmail.com" },
+
+  { id:"walmart-darrenustaris2-2026-04-21-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-21", eta:"2026-04-21",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Arrived Apr 21; card shop inventory", source:"darrenustaris2@gmail.com" },
+
+  // ===== wdcardshop2 — Walmart orders =====
+
+  { id:"walmart-wdcardshop2-2026-04-01-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 1; ETA Apr 7; delivered; card shop inventory", source:"wdcardshop2@gmail.com" },
+
+  { id:"walmart-wdcardshop2-2026-04-01-scarlet", retailer:"Walmart",
+    item:"Pokemon Scarlet & Violet + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-07", eta:"2026-04-07",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 1; ETA Apr 7; delivered; card shop inventory", source:"wdcardshop2@gmail.com" },
+
+  { id:"walmart-wdcardshop2-2026-04-05-tcg-a", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"wdcardshop2@gmail.com" },
+
+  { id:"walmart-wdcardshop2-2026-04-05-tcg-b", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"wdcardshop2@gmail.com" },
+
+  // ===== wdcardshop3 — Walmart orders =====
+
+  { id:"walmart-wdcardshop3-2026-03-31-tcg", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-06", eta:"2026-04-06",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Mar 31; ETA Apr 6; delivered; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  { id:"walmart-wdcardshop3-2026-04-05-tcg-a", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  { id:"walmart-wdcardshop3-2026-04-05-tcg-b", retailer:"Walmart",
+    item:"Pokemon Trading Card Game + 4 other items",
+    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-10", eta:"2026-04-10",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Ordered Apr 5; ETA Apr 10; delivered; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  // ===== 2026-04-22 refresh =====
+
+  { id:"walmart-2000145-70941286", retailer:"Walmart",
+    item:"Pokemon SV Prismatic Evolutions Elite Trainer Box x5",
+    qty:5, total:382.65, orderNum:"2000145-70941286", status:"Cancelled", lastUpdate:"2026-04-22", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Cancelled; Order #2000145-70941286; $382.65; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  { id:"walmart-2000144-10344198", retailer:"Walmart",
+    item:"Pokemon ME Ascended Heroes First Partners Deluxe Pin Collection x5",
+    qty:5, total:296.95, orderNum:"2000144-10344198", status:"Cancelled", lastUpdate:"2026-04-22", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Cancelled; Order #2000144-10344198; $296.95; card shop inventory", source:"wdcardshop3@gmail.com" },
+
+  { id:"walmart-2000146-91818849", retailer:"Walmart",
+    item:"Pokemon ME Ascended Heroes First Partners Deluxe Pin Collection x5",
+    qty:5, total:296.95, orderNum:"2000146-91818849", status:"Cancelled", lastUpdate:"2026-04-22", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Cancelled; Order #2000146-91818849; $296.95; card shop inventory", source:"darrenustaris3@gmail.com" },
+
+  // ===== 2026-04-24 refresh =====
+
+  { id:"target-102003309454336", retailer:"Target",
+    item:"Pokémon TCG Mega Evolution Chaos Rising Booster Bundle × 2",
+    qty:2, total:65.98, orderNum:"102003309454336", status:"Cancelled", lastUpdate:"2026-04-24", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"Thomas Lau\n1311 Glenwood Ave., RM 7\nSan Jose, CA 95125",
+    notes:"Preorder placed & cancelled same day Apr 24; purchase limit/activity flag; not charged; ETA was May 25-28", source:"wdcardshop@gmail.com" },
+
+  { id:"walmart-thomaskazlau-2000144-78679366", retailer:"Walmart",
+    item:"Pokémon ME Ascended Heroes First Partners Deluxe Pin Collection × 5",
+    qty:5, total:296.95, orderNum:"2000144-78679366", status:"Delivered", lastUpdate:"2026-04-24", eta:"2026-04-08",
+    tracking:"", carrier:"Walmart",
+    trackingUrl:"",
+    stale:false, shipTo:"1311 Glenwood Ave., San Jose, CA 95125",
+    notes:"Order #2000144-78679366 placed Apr 1; ETA Apr 8; delivered; MC ending 1628; thomaskazlau account; card shop inventory", source:"wdcardshop@gmail.com" },
+
+  { id:"ups-1ZHE53840330219886", retailer:"Walmart",
+    item:"Pokémon SV8.5 Prismatic Evolutions Poster Collection × 5",
+    qty:5, total:null, orderNum:"2000144-12777093", status:"Delivered", lastUpdate:"2026-04-24", eta:"2026-04-21",
+    tracking:"1ZHE53840330219886", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1ZHE53840330219886",
+    stale:false, shipTo:"1311 Glenwood Ave., San Jose, CA 95125",
+    notes:"Order #2000144-12777093 placed Apr 13; UPS via GT Collectibles and Toys; ETA Apr 21; delivered; thomaskazlau account; card shop inventory", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-04-27 refresh =====
+
+  { id:"tcgplayer-37429C8B-2AB638-B2D2C", retailer:"TCGplayer",
+    item:"Purchase from Astral Have (refunded)",
+    qty:null, total:null, orderNum:"37429C8B-2AB638-B2D2C", status:"Cancelled", lastUpdate:"2026-04-27", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"Full refund issued by TCGplayer on behalf of seller Astral Have; Apr 27, 2026", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-04-28 refresh =====
+
+  { id:"goldriverdistributors-9212", retailer:"Gold River Distributors",
+    item:"Pokemon ME Ascended Heroes EX Box ×12 + S&V Prismatic Evolution Premium Col ×12 + ME Ascended Heroes Booster Bundle ×25",
+    qty:49, total:5826.91, orderNum:"9212", status:"Delivered", lastUpdate:"2026-04-29", eta:"2026-04-29",
+    tracking:"1Z5X74750343962308", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750343962308",
+    stale:false, shipTo:"Thomas Lau\n1311 Glenwood Ave\nSan Jose, CA 95125",
+    notes:"Order #9212; $5,826.91 (Elavon confirmed Apr 28); 2 UPS shipments (also 1Z5X74750343916715); delivered Apr 29", source:"wdcardshop@gmail.com" },
+
+  { id:"tello-2026-04-28", retailer:"Tello",
+    item:"Tello SIM card batch (5 orders in transit)",
+    qty:5, total:null, orderNum:"", status:"In Transit", lastUpdate:"2026-04-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"5 Tello SIM orders confirmed & shipped Apr 28; activate via My Tello upon arrival; bulk SIM purchase for wdcardshop account", source:"wdcardshop@gmail.com" },
+
+  // ===== TCGplayer Sales — outgoing orders to fulfill & ship to buyers =====
+
+  // Status "Ordered" = sold, awaiting seller shipment. Update to "In Transit" after shipping.
+
+  { id:"tcgplayer-BE1B02F8-2D51C1-6EC66", retailer:"TCGplayer (Sale)",
+    item:"Mega Evolution Booster Box ×6",
+    qty:6, total:2009.88, orderNum:"BE1B02F8-2D51C1-6EC66", status:"Ordered", lastUpdate:"2026-04-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-45ECFB-BE0A9", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] ×2",
+    qty:2, total:42.28, orderNum:"BE1B02F8-45ECFB-BE0A9", status:"Ordered", lastUpdate:"2026-04-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-19822D-380AF", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - Black (100-Pack) + 1 more item",
+    qty:2, total:21.58, orderNum:"BE1B02F8-19822D-380AF", status:"Ordered", lastUpdate:"2026-04-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-237A1A-8693E", retailer:"TCGplayer (Sale)",
+    item:"Journey Together Booster Bundle ×1",
+    qty:1, total:47.99, orderNum:"BE1B02F8-237A1A-8693E", status:"Ordered", lastUpdate:"2026-04-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-C6C255-3E7B4", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Japanese Size Matte Clear Outer Sleeves (60-Pack) ×1",
+    qty:1, total:9.39, orderNum:"BE1B02F8-C6C255-3E7B4", status:"Ordered", lastUpdate:"2026-04-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-E579C4-B6418", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - Purple (100-Pack) ×1",
+    qty:1, total:10.89, orderNum:"BE1B02F8-E579C4-B6418", status:"Ordered", lastUpdate:"2026-04-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-35BEB4-BF38F", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] ×1",
+    qty:1, total:21.04, orderNum:"BE1B02F8-35BEB4-BF38F", status:"Ordered", lastUpdate:"2026-04-27", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-4869C4-D5ECA", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] ×2",
+    qty:2, total:42.08, orderNum:"BE1B02F8-4869C4-D5ECA", status:"Ordered", lastUpdate:"2026-04-27", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-CFC88B-ED62F", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] ×2",
+    qty:2, total:42.08, orderNum:"BE1B02F8-CFC88B-ED62F", status:"Ordered", lastUpdate:"2026-04-27", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-685AD3-37119", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - Purple (100-Pack) ×1",
+    qty:1, total:10.99, orderNum:"BE1B02F8-685AD3-37119", status:"Ordered", lastUpdate:"2026-04-27", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-389B87-473CA", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield - Perfect Fit Thick Inner Sleeves (Clear) ×1",
+    qty:1, total:8.99, orderNum:"BE1B02F8-389B87-473CA", status:"Ordered", lastUpdate:"2026-04-25", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-41A0F5-98CF6", retailer:"TCGplayer (Sale)",
+    item:"Scarlet ex Booster Box ×2",
+    qty:2, total:175.96, orderNum:"BE1B02F8-41A0F5-98CF6", status:"Ordered", lastUpdate:"2026-04-25", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-6129C0-30D75", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Dual Matte Standard Sleeves - Soul (100-Pack) ×1",
+    qty:1, total:13.99, orderNum:"BE1B02F8-6129C0-30D75", status:"Ordered", lastUpdate:"2026-04-24", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-23415C-92E80", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - White (100-Pack) ×2",
+    qty:2, total:21.38, orderNum:"BE1B02F8-23415C-92E80", status:"Ordered", lastUpdate:"2026-04-24", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-235C54-9EF6E", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - White (100-Pack) ×1",
+    qty:1, total:10.69, orderNum:"BE1B02F8-235C54-9EF6E", status:"Ordered", lastUpdate:"2026-04-24", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-5BC511-8B373", retailer:"TCGplayer (Sale)",
+    item:"Journey Together Elite Trainer Box ×1",
+    qty:1, total:111.99, orderNum:"BE1B02F8-5BC511-8B373", status:"Ordered", lastUpdate:"2026-04-23", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-471928-D5A80", retailer:"TCGplayer (Sale)",
+    item:"Journey Together Elite Trainer Box ×1",
+    qty:1, total:111.99, orderNum:"BE1B02F8-471928-D5A80", status:"Ordered", lastUpdate:"2026-04-23", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-16A106-9A2D4", retailer:"TCGplayer (Sale)",
+    item:"Journey Together Elite Trainer Box ×1",
+    qty:1, total:111.99, orderNum:"BE1B02F8-16A106-9A2D4", status:"Ordered", lastUpdate:"2026-04-23", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-414EE7-79A22", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Dual Matte Standard Sleeves - Soul (100-Pack) ×1",
+    qty:1, total:13.99, orderNum:"BE1B02F8-414EE7-79A22", status:"Ordered", lastUpdate:"2026-04-23", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-43001F-E761F", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - Black (100-Pack) ×2",
+    qty:2, total:21.98, orderNum:"BE1B02F8-43001F-E761F", status:"Ordered", lastUpdate:"2026-04-23", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-EDEA1E-1A490", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - Purple (100-Pack) ×1",
+    qty:1, total:10.99, orderNum:"BE1B02F8-EDEA1E-1A490", status:"Ordered", lastUpdate:"2026-04-23", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-D19067-1A5C0", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Japanese Size Perfect Fit Inner Sleeves - Clear ×4",
+    qty:4, total:24.76, orderNum:"BE1B02F8-D19067-1A5C0", status:"Ordered", lastUpdate:"2026-04-22", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-E53254-BBF9D", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] ×5",
+    qty:5, total:107.4, orderNum:"BE1B02F8-E53254-BBF9D", status:"Ordered", lastUpdate:"2026-04-22", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-4DB3E9-9984A", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield - Perfect Fit Thick Inner Sleeves (Clear) ×2",
+    qty:2, total:17.98, orderNum:"BE1B02F8-4DB3E9-9984A", status:"Ordered", lastUpdate:"2026-04-22", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-6FE86E-31151", retailer:"TCGplayer (Sale)",
+    item:"Prismatic Evolutions Surprise Box ×1",
+    qty:1, total:64.99, orderNum:"BE1B02F8-6FE86E-31151", status:"Ordered", lastUpdate:"2026-04-22", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-2EF0F9-AD288", retailer:"TCGplayer (Sale)",
+    item:"Prismatic Evolutions Surprise Box ×1",
+    qty:1, total:64.99, orderNum:"BE1B02F8-2EF0F9-AD288", status:"Ordered", lastUpdate:"2026-04-22", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-151814-BA3B3", retailer:"TCGplayer (Sale)",
+    item:"Prismatic Evolutions Surprise Box ×1",
+    qty:1, total:64.99, orderNum:"BE1B02F8-151814-BA3B3", status:"Ordered", lastUpdate:"2026-04-22", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-D669C3-75F38", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×1",
+    qty:1, total:38.99, orderNum:"BE1B02F8-D669C3-75F38", status:"Ordered", lastUpdate:"2026-04-19", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-759E4B-95D20", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×2",
+    qty:2, total:77.98, orderNum:"BE1B02F8-759E4B-95D20", status:"Ordered", lastUpdate:"2026-04-19", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-013CEB-65117", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×2",
+    qty:2, total:77.98, orderNum:"BE1B02F8-013CEB-65117", status:"Ordered", lastUpdate:"2026-04-19", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-F31ECA-ADC0D", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×2",
+    qty:2, total:77.98, orderNum:"BE1B02F8-F31ECA-ADC0D", status:"Ordered", lastUpdate:"2026-04-19", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-00EAD1-21A57", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×2",
+    qty:2, total:77.98, orderNum:"BE1B02F8-00EAD1-21A57", status:"Ordered", lastUpdate:"2026-04-19", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-B687E4-3783D", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] ×2",
+    qty:2, total:44.98, orderNum:"BE1B02F8-B687E4-3783D", status:"Ordered", lastUpdate:"2026-04-18", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-AAC99D-DE849", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×2",
+    qty:2, total:77.96, orderNum:"BE1B02F8-AAC99D-DE849", status:"Ordered", lastUpdate:"2026-04-18", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-2153BF-2280D", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×3",
+    qty:3, total:116.94, orderNum:"BE1B02F8-2153BF-2280D", status:"Ordered", lastUpdate:"2026-04-18", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-553DB1-F0A9F", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×2",
+    qty:2, total:77.96, orderNum:"BE1B02F8-553DB1-F0A9F", status:"Ordered", lastUpdate:"2026-04-17", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-906A59-253F9", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×2",
+    qty:2, total:77.96, orderNum:"BE1B02F8-906A59-253F9", status:"Ordered", lastUpdate:"2026-04-17", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-9F4970-E8B28", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×1",
+    qty:1, total:38.98, orderNum:"BE1B02F8-9F4970-E8B28", status:"Ordered", lastUpdate:"2026-04-17", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-D181A7-C37A9", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×1",
+    qty:1, total:38.98, orderNum:"BE1B02F8-D181A7-C37A9", status:"Ordered", lastUpdate:"2026-04-17", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-E9F9A1-F87A0", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×7",
+    qty:7, total:272.86, orderNum:"BE1B02F8-E9F9A1-F87A0", status:"Ordered", lastUpdate:"2026-04-17", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-8EAF72-30AF5", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×2",
+    qty:2, total:77.96, orderNum:"BE1B02F8-8EAF72-30AF5", status:"Ordered", lastUpdate:"2026-04-16", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-E3B463-9088D", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle ×1",
+    qty:1, total:38.98, orderNum:"BE1B02F8-E3B463-9088D", status:"Ordered", lastUpdate:"2026-04-16", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-DC7682-BCCFD", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] ×4",
+    qty:4, total:89.96, orderNum:"BE1B02F8-DC7682-BCCFD", status:"Ordered", lastUpdate:"2026-04-16", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-D1FFBF-70A55", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] ×1",
+    qty:1, total:22.49, orderNum:"BE1B02F8-D1FFBF-70A55", status:"Ordered", lastUpdate:"2026-04-16", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-E1B9B7-C7214", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] ×2",
+    qty:2, total:44.98, orderNum:"BE1B02F8-E1B9B7-C7214", status:"Ordered", lastUpdate:"2026-04-17", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  // ===== eBay Sales — outgoing orders to fulfill & ship to buyers =====
+
+  { id:"ebay-2026-04-28-luka-stadium-ff", retailer:"eBay (Sale)",
+    item:"Luka Stadium - Strixhaven Stadium (Showcase) Final Fantasy Regular #63 MINT",
+    qty:1, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"eBay sale — ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"ebay-2026-04-28-mtg-realm-of-koh", retailer:"eBay (Sale)",
+    item:"MTG Realm of Koh 0391 Regular (Extended Art) Avatar: The Last Airbender TLA NM",
+    qty:1, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"eBay sale — ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"ebay-2026-04-28-vindictive-warden", retailer:"eBay (Sale)",
+    item:"Vindictive Warden (Foil) 0249 Avatar: The Last Airbender TLA - MTG NM/M",
+    qty:1, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"eBay sale — ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"ebay-2026-04-14-tyler-warren-lot", retailer:"eBay (Sale)",
+    item:"LOT of 6: Tyler Warren, Loveland & More Panini Donruss Rookie Phenom Patch Jersey",
+    qty:6, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-14", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"eBay sale — ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"ebay-2026-04-14-donquixote-rosinante", retailer:"eBay (Sale)",
+    item:"Donquixote Rosinante OP12-061 Legacy of the Master One Piece",
+    qty:1, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-14", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"eBay sale — ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"ebay-2026-04-11-tyler-warren-psa9", retailer:"eBay (Sale)",
+    item:"2025 Panini Donruss TYLER WARREN Rated Rookie Optic Preview RED PANDORA PSA 9",
+    qty:1, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-11", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"eBay sale — ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"ebay-2026-04-03-mtg-spindown-ff", retailer:"eBay (Sale)",
+    item:"Magic The Gathering X Final Fantasy White Bundle Spindown D20 Die Dice",
+    qty:1, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-03", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"eBay sale — ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"ebay-2026-04-02-ladd-mcconkey", retailer:"eBay (Sale)",
+    item:"2025 Donruss #BS-LMY Ladd McConkey Bomb Squad",
+    qty:1, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-02", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"eBay sale — ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"ebay-2026-03-28-sin-spiras", retailer:"eBay (Sale)",
+    item:"Sin, Spira's Punishment NM Final Fantasy MTG Magic the Gathering",
+    qty:1, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-03-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"eBay sale — ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"ebay-2026-03-28-mtg-spindown-ff-b", retailer:"eBay (Sale)",
+    item:"Magic The Gathering X Final Fantasy White Bundle Spindown D20 Die Dice",
+    qty:1, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-03-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"",
+    notes:"eBay sale — ship to buyer", source:"wdcardshop@gmail.com" },
+
+  // ===== WD Card Shop — Shopify Customer Orders (outgoing sales) =====
+
+  { id:"shopify-1235", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes First Partners Deluxe Pin Collection ×12",
+    qty:12, total:647.88, orderNum:"1235", status:"Ordered", lastUpdate:"2026-04-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"Peter II",
+    notes:"Shopify order #1235; Peter James Simeone II; $647.88; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1234", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Terastal Fest ex Booster Box ×2",
+    qty:2, total:271.98, orderNum:"1234", status:"Ordered", lastUpdate:"2026-04-26", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"Abdallah Abed",
+    notes:"Shopify order #1234; Abdallah Abed; $271.98; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1233", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes First Partners Deluxe Pin Collection ×6",
+    qty:6, total:323.94, orderNum:"1233", status:"Ordered", lastUpdate:"2026-04-26", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"Jesse Thibodeau",
+    notes:"Shopify order #1233; Jesse Thibodeau; $323.94; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1232", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Prismatic Evolutions Surprise Box ×36",
+    qty:36, total:1871.64, orderNum:"1232", status:"Ordered", lastUpdate:"2026-04-24", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"Kimberly Felkar",
+    notes:"Shopify order #1232; Kimberly Felkar; $1871.64; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1231", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes Premium Poster Collection Case ×1",
+    qty:1, total:760.0, orderNum:"1231", status:"Ordered", lastUpdate:"2026-04-22", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Juan Delacruz",
+    notes:"Shopify order #1231; Juan Delacruz; $760.00; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1230", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Mega Evolution Pokemon Booster Bundle ×6",
+    qty:6, total:270.94, orderNum:"1230", status:"Ordered", lastUpdate:"2026-04-20", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Jesse Thibodeau",
+    notes:"Shopify order #1230; Jesse Thibodeau; $270.94; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1229", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Perfect Order Booster Bundle ×1",
+    qty:1, total:33.99, orderNum:"1229", status:"Ordered", lastUpdate:"2026-04-20", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Ian DeGaten",
+    notes:"Shopify order #1229; Ian DeGaten; $33.99; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1226", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Destined Rivals Booster Bundle ×6",
+    qty:6, total:354.94, orderNum:"1226", status:"Ordered", lastUpdate:"2026-04-17", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Emily Lathrop",
+    notes:"Shopify order #1226; Emily Lathrop; $354.94; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1225", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Mega Evolution Pokemon Booster Bundle ×3",
+    qty:3, total:144.96, orderNum:"1225", status:"Ordered", lastUpdate:"2026-04-17", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Keith Coffindaffer",
+    notes:"Shopify order #1225; Keith Coffindaffer; $144.96; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1224", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes Premium Poster Collection Case ×1",
+    qty:1, total:700.0, orderNum:"1224", status:"Ordered", lastUpdate:"2026-04-17", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Tsz Ho",
+    notes:"Shopify order #1224; Tsz Yeung Ho; $700.00; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1223", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Journey Together Elite Trainer Box ×1",
+    qty:1, total:104.99, orderNum:"1223", status:"Ordered", lastUpdate:"2026-04-16", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Mikayla Waters",
+    notes:"Shopify order #1223; Mikayla Waters; $104.99; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1222", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes Elite Trainer Box ×2",
+    qty:2, total:275.98, orderNum:"1222", status:"Ordered", lastUpdate:"2026-04-14", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Alex Penaloza",
+    notes:"Shopify order #1222; Alex Penaloza; $275.98; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1220", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Mega Charizard X ex Ultra-Premium Collection ×1 + Destined Rivals Booster Bundle ×1",
+    qty:2, total:259.98, orderNum:"1220", status:"Ordered", lastUpdate:"2026-04-14", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Bailey Tuturice",
+    notes:"Shopify order #1220; Bailey Tuturice; $259.98; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1219", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes First Partners Deluxe Pin Collection ×10",
+    qty:10, total:499.9, orderNum:"1219", status:"Ordered", lastUpdate:"2026-04-13", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Peter II",
+    notes:"Shopify order #1219; Peter James Simeone II; $499.90; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1218", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes Elite Trainer Box ×2",
+    qty:2, total:265.98, orderNum:"1218", status:"Ordered", lastUpdate:"2026-04-13", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Vincent Diaz",
+    notes:"Shopify order #1218; Vincent Diaz; $265.98; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1217", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Destined Rivals Booster Bundle ×1 + Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection",
+    qty:2, total:null, orderNum:"1217", status:"Ordered", lastUpdate:"2026-04-11", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Edwin Arellano",
+    notes:"Shopify order #1217; Edwin Arellano; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1216", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Prismatic Evolutions Surprise Box ×4 + Ascended Heroes Elite Trainer Box ×2",
+    qty:6, total:457.94, orderNum:"1216", status:"Ordered", lastUpdate:"2026-04-09", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Jesse Thibodeau",
+    notes:"Shopify order #1216; Jesse Thibodeau; $457.94; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1215", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection ×1",
+    qty:1, total:209.98, orderNum:"1215", status:"Ordered", lastUpdate:"2026-04-08", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"travis watkins",
+    notes:"Shopify order #1215; travis watkins; $209.98; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1214", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Premium Poster Collection: Mega Lucario ×2 + Premium Poster Collection: Mega Gardevoir ×3",
+    qty:5, total:564.95, orderNum:"1214", status:"Ordered", lastUpdate:"2026-04-07", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Jason Yillik",
+    notes:"Shopify order #1214; Jason Yillik; $564.95; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1213", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Mega Evolutions Booster Box ×10",
+    qty:10, total:2849.9, orderNum:"1213", status:"Ordered", lastUpdate:"2026-04-07", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Garrett McManus",
+    notes:"Shopify order #1213; Garrett McManus; $2849.90; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1212", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes Elite Trainer Box ×1",
+    qty:1, total:127.99, orderNum:"1212", status:"Ordered", lastUpdate:"2026-04-07", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Alex Penaloza",
+    notes:"Shopify order #1212; Alex Penaloza; $127.99; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1211", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Premium Poster Collection: Mega Lucario ×1 + Destined Rivals Booster Bundle ×10",
+    qty:11, total:715.89, orderNum:"1211", status:"Ordered", lastUpdate:"2026-04-07", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Jeff Gossman",
+    notes:"Shopify order #1211; Jeff Gossman; $715.89; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1210", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Phantasmal Flames Elite Trainer Box ×2",
+    qty:2, total:214.98, orderNum:"1210", status:"Ordered", lastUpdate:"2026-04-06", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Sukhpreet Singh",
+    notes:"Shopify order #1210; Sukhpreet Singh; $214.98; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1209", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Premium Poster Collection: Mega Lucario ×1",
+    qty:1, total:null, orderNum:"1209", status:"Ordered", lastUpdate:"2026-04-05", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Danniel To",
+    notes:"Shopify order #1209; Danniel To; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1207", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection ×1",
+    qty:1, total:209.98, orderNum:"1207", status:"Ordered", lastUpdate:"2026-04-02", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Branson Farnsworth",
+    notes:"Shopify order #1207; Branson Farnsworth; $209.98; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1206", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Destined Rivals Booster Bundle ×3",
+    qty:3, total:154.97, orderNum:"1206", status:"Ordered", lastUpdate:"2026-04-02", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Jonathan Roberts",
+    notes:"Shopify order #1206; Jonathan Roberts; $154.97; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1205", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Phantasmal Flames Elite Trainer Box ×2",
+    qty:2, total:194.98, orderNum:"1205", status:"Ordered", lastUpdate:"2026-04-01", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Dilraj Sohal",
+    notes:"Shopify order #1205; Dilraj Sohal; $194.98; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1204", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Black Bolt Booster Box ×1",
+    qty:1, total:147.98, orderNum:"1204", status:"Ordered", lastUpdate:"2026-04-01", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Alex Penaloza",
+    notes:"Shopify order #1204; Alex Penaloza; $147.98; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1203", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes Elite Trainer Box ×6",
+    qty:6, total:715.94, orderNum:"1203", status:"Ordered", lastUpdate:"2026-03-31", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Jonathan Beane",
+    notes:"Shopify order #1203; Jonathan Beane; $715.94; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1202", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes Elite Trainer Box Case ×1 + Prismatic Evolutions items",
+    qty:null, total:null, orderNum:"1202", status:"Ordered", lastUpdate:"2026-03-31", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Jonathan Beane",
+    notes:"Shopify order #1202; Jonathan Beane; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1201", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Prismatic Evolutions Booster Bundle ×6",
+    qty:6, total:437.94, orderNum:"1201", status:"Ordered", lastUpdate:"2026-03-31", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Jonathan Roberts",
+    notes:"Shopify order #1201; Jonathan Roberts; $437.94; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1200", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes First Partners Deluxe Pin Collection ×12",
+    qty:12, total:551.88, orderNum:"1200", status:"Ordered", lastUpdate:"2026-03-30", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Peter II",
+    notes:"Shopify order #1200; Peter James Simeone II; $551.88; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1199", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes Elite Trainer Box Case ×1 + Ascended Heroes items",
+    qty:null, total:null, orderNum:"1199", status:"Ordered", lastUpdate:"2026-03-30", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Aidan Keck",
+    notes:"Shopify order #1199; Aidan Keck; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1198", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Phantasmal Flames Booster Box Case ×1",
+    qty:1, total:2099.99, orderNum:"1198", status:"Ordered", lastUpdate:"2026-03-29", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Paul McCracken",
+    notes:"Shopify order #1198; Paul McCracken; $2099.99; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1197", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Nihil Zero Booster Box ×3",
+    qty:3, total:204.97, orderNum:"1197", status:"Ordered", lastUpdate:"2026-03-29", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Yasia Thoj",
+    notes:"Shopify order #1197; Yasia Thoj; $204.97; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1196", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Scarlet ex Booster Box ×1",
+    qty:1, total:null, orderNum:"1196", status:"Ordered", lastUpdate:"2026-03-28", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Alex Lau",
+    notes:"Shopify order #1196; Alex Lau; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1194", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes First Partners Deluxe Pin Collection ×1",
+    qty:1, total:null, orderNum:"1194", status:"Ordered", lastUpdate:"2026-03-27", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:true, shipTo:"Natalie C",
+    notes:"Shopify order #1194; Natalie C; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-04-29 refresh =====
+
+  { id:"goldriverdistributors-9236", retailer:"Gold River Distributors",
+    item:"Pokémon S&V Prismatic Evolution Premium Collection ×12",
+    qty:12, total:3463.02, orderNum:"9236", status:"In Transit", lastUpdate:"2026-04-29", eta:"2026-04-30",
+    tracking:"1Z5X74750343746748", carrier:"UPS",
+    trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750343746748",
+    stale:false, shipTo:"Thomas Lau\n1311 Glenwood Ave\nSan Jose, CA 95125",
+    notes:"Order #9236; $3,420.00 + shipping/tax = $3,463.02; 2 UPS packages (second tracking TBD); confirmed & paid Apr 29; ETA Apr 30", source:"wdcardshop@gmail.com" },
+
+  { id:"pokemoncenter-P0036034445", retailer:"Pokémon Center",
+    item:"Pokémon TCG: Mega Evolution-Ascended Heroes Tech Sticker Collection (Charmander) ×1",
+    qty:1, total:23.21, orderNum:"P0036034445", status:"Ordered", lastUpdate:"2026-04-29", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"Darren Ustaris\n21995 Bellcroft Drive\nLake Forest, CA 92630",
+    notes:"Order #P0036034445; $15.99 + $1.24 tax + $5.98 shipping = $23.21; ordered Apr 29; allow up to 10 business days; darrenustaris account", source:"darrenustaris@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-8F86F5-CC56C", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] ×2",
+    qty:2, total:42.28, orderNum:"BE1B02F8-8F86F5-CC56C", status:"Ordered", lastUpdate:"2026-04-29", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-EDAB0B-4CF4D", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - White (100-Pack) ×1",
+    qty:1, total:10.69, orderNum:"BE1B02F8-EDAB0B-4CF4D", status:"Ordered", lastUpdate:"2026-04-29", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1236", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Mega Charizard X ex Ultra-Premium Collection ×2",
+    qty:2, total:399.98, orderNum:"1236", status:"Ordered", lastUpdate:"2026-04-29", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"Alex Lefkowitz",
+    notes:"Shopify order #1236; Alex Lefkowitz; $399.98; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-04-30 refresh =====
+
+  { id:"tcgplayer-BE1B02F8-A372A0-EDDE1", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Japanese Size Matte Clear Outer Sleeves (60-Pack) ×5",
+    qty:5, total:46.95, orderNum:"BE1B02F8-A372A0-EDDE1", status:"Ordered", lastUpdate:"2026-04-30", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-18C74A-CC14F", retailer:"TCGplayer (Sale)",
+    item:"Scarlet ex Booster Box ×1",
+    qty:1, total:86.99, orderNum:"BE1B02F8-18C74A-CC14F", status:"Ordered", lastUpdate:"2026-04-30", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-7C4948-E2D6D", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Dual Matte Standard Sleeves - Cobalt & Silver (100-Pack) + 1 more item",
+    qty:2, total:21.68, orderNum:"BE1B02F8-7C4948-E2D6D", status:"Ordered", lastUpdate:"2026-04-30", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-D05615-27539", retailer:"TCGplayer (Sale)",
+    item:"TCGplayer sale (buyer message received)",
+    qty:null, total:103.94, orderNum:"BE1B02F8-D05615-27539", status:"Ordered", lastUpdate:"2026-04-30", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"TCGplayer sale $103.94 — Steven Chen; buyer message received Apr 30; ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-04-30 (backfill Apr 14-21 TCGplayer sales) =====
+
+  { id:"tcgplayer-BE1B02F8-91B88B-D0E51", retailer:"TCGplayer (Sale)",
+    item:"Scarlet ex Booster Box x1", qty:1, total:89.98, orderNum:"BE1B02F8-91B88B-D0E51",
+    status:"Ordered", lastUpdate:"2026-04-14", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-4A72F9-51499", retailer:"TCGplayer (Sale)",
+    item:"Scarlet ex Booster Box x6", qty:6, total:539.88, orderNum:"BE1B02F8-4A72F9-51499",
+    status:"Ordered", lastUpdate:"2026-04-14", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-C9BCB2-08975", retailer:"TCGplayer (Sale)",
+    item:"Journey Together Booster Bundle x2", qty:2, total:77.86, orderNum:"BE1B02F8-C9BCB2-08975",
+    status:"Ordered", lastUpdate:"2026-04-14", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-B35E6F-6CFDA", retailer:"TCGplayer (Sale)",
+    item:"Journey Together Booster Bundle x2", qty:2, total:77.86, orderNum:"BE1B02F8-B35E6F-6CFDA",
+    status:"Ordered", lastUpdate:"2026-04-14", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-8D3632-BC6CD", retailer:"TCGplayer (Sale)",
+    item:"Journey Together Booster Bundle x4", qty:4, total:155.72, orderNum:"BE1B02F8-8D3632-BC6CD",
+    status:"Ordered", lastUpdate:"2026-04-14", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-DEE402-45563", retailer:"TCGplayer (Sale)",
+    item:"Journey Together Booster Bundle x2", qty:2, total:77.86, orderNum:"BE1B02F8-DEE402-45563",
+    status:"Ordered", lastUpdate:"2026-04-14", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-7F3F54-4A51D", retailer:"TCGplayer (Sale)",
+    item:"Journey Together Booster Bundle x3", qty:3, total:116.79, orderNum:"BE1B02F8-7F3F54-4A51D",
+    status:"Ordered", lastUpdate:"2026-04-15", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-02527C-B7F23", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] x2", qty:2, total:44.98, orderNum:"BE1B02F8-02527C-B7F23",
+    status:"Ordered", lastUpdate:"2026-04-15", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-F87090-7D0DE", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] x2", qty:2, total:44.98, orderNum:"BE1B02F8-F87090-7D0DE",
+    status:"Ordered", lastUpdate:"2026-04-16", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-8EF629-9A97C", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order Booster Bundle x12", qty:12, total:470.28, orderNum:"BE1B02F8-8EF629-9A97C",
+    status:"Ordered", lastUpdate:"2026-04-16", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-857F97-D022C", retailer:"TCGplayer (Sale)",
+    item:"Nihil Zero Booster Box x4", qty:4, total:291.20, orderNum:"BE1B02F8-857F97-D022C",
+    status:"Ordered", lastUpdate:"2026-04-16", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-57F3A1-99030", retailer:"TCGplayer (Sale)",
+    item:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection x1", qty:1, total:217.95, orderNum:"BE1B02F8-57F3A1-99030",
+    status:"Ordered", lastUpdate:"2026-04-16", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-B113CA-C2807", retailer:"TCGplayer (Sale)",
+    item:"Unova Poster Collection x2", qty:2, total:79.96, orderNum:"BE1B02F8-B113CA-C2807",
+    status:"Ordered", lastUpdate:"2026-04-16", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-1FD26B-ACC80", retailer:"TCGplayer (Sale)",
+    item:"Nihil Zero Booster Box x1", qty:1, total:72.78, orderNum:"BE1B02F8-1FD26B-ACC80",
+    status:"Ordered", lastUpdate:"2026-04-17", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-4C419C-F39F4", retailer:"TCGplayer (Sale)",
+    item:"Nihil Zero Booster Box x3", qty:3, total:218.34, orderNum:"BE1B02F8-4C419C-F39F4",
+    status:"Ordered", lastUpdate:"2026-04-17", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-92AEAF-0EADF", retailer:"TCGplayer (Sale)",
+    item:"Nihil Zero Booster Box x1", qty:1, total:72.78, orderNum:"BE1B02F8-92AEAF-0EADF",
+    status:"Ordered", lastUpdate:"2026-04-17", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-F355CC-DA4F2", retailer:"TCGplayer (Sale)",
+    item:"Nihil Zero Booster Box x1", qty:1, total:72.78, orderNum:"BE1B02F8-F355CC-DA4F2",
+    status:"Ordered", lastUpdate:"2026-04-17", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-58EA12-F976B", retailer:"TCGplayer (Sale)",
+    item:"Mega Symphonia Booster Box x3", qty:3, total:284.94, orderNum:"BE1B02F8-58EA12-F976B",
+    status:"Ordered", lastUpdate:"2026-04-17", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-CF0BC0-18728", retailer:"TCGplayer (Sale)",
+    item:"Mega Brave Booster Box x4", qty:4, total:395.36, orderNum:"BE1B02F8-CF0BC0-18728",
+    status:"Ordered", lastUpdate:"2026-04-17", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-DF9ECF-FF34C", retailer:"TCGplayer (Sale)",
+    item:"Journey Together Elite Trainer Box x1", qty:1, total:111.99, orderNum:"BE1B02F8-DF9ECF-FF34C",
+    status:"Ordered", lastUpdate:"2026-04-18", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-9C2AA7-EDB1A", retailer:"TCGplayer (Sale)",
+    item:"Journey Together Elite Trainer Box x1", qty:1, total:111.99, orderNum:"BE1B02F8-9C2AA7-EDB1A",
+    status:"Ordered", lastUpdate:"2026-04-18", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-4AD601-7B494", retailer:"TCGplayer (Sale)",
+    item:"Journey Together Elite Trainer Box x1", qty:1, total:111.99, orderNum:"BE1B02F8-4AD601-7B494",
+    status:"Ordered", lastUpdate:"2026-04-18", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-88D152-89A90", retailer:"TCGplayer (Sale)",
+    item:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection x1", qty:1, total:217.95, orderNum:"BE1B02F8-88D152-89A90",
+    status:"Ordered", lastUpdate:"2026-04-18", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-C94E54-ED350", retailer:"TCGplayer (Sale)",
+    item:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection x1", qty:1, total:217.95, orderNum:"BE1B02F8-C94E54-ED350",
+    status:"Ordered", lastUpdate:"2026-04-18", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-DEDE5C-3982C", retailer:"TCGplayer (Sale)",
+    item:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection x1", qty:1, total:217.95, orderNum:"BE1B02F8-DEDE5C-3982C",
+    status:"Ordered", lastUpdate:"2026-04-19", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-BD273A-E693D", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - White (100-Pack) x1", qty:1, total:10.99, orderNum:"BE1B02F8-BD273A-E693D",
+    status:"Ordered", lastUpdate:"2026-04-18", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-A6B980-4754F", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - White (100-Pack) x1", qty:1, total:10.99, orderNum:"BE1B02F8-A6B980-4754F",
+    status:"Ordered", lastUpdate:"2026-04-18", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-B78C89-50ED3", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - White (100-Pack) x1", qty:1, total:10.99, orderNum:"BE1B02F8-B78C89-50ED3",
+    status:"Ordered", lastUpdate:"2026-04-18", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-BF6340-60545", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - White (100-Pack) x1", qty:1, total:10.99, orderNum:"BE1B02F8-BF6340-60545",
+    status:"Ordered", lastUpdate:"2026-04-19", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-ADAABF-7EE1E", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - White (100-Pack) x1", qty:1, total:10.99, orderNum:"BE1B02F8-ADAABF-7EE1E",
+    status:"Ordered", lastUpdate:"2026-04-19", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-5B17B0-19F01", retailer:"TCGplayer (Sale)",
+    item:"Mega Symphonia Booster Box x1", qty:1, total:94.98, orderNum:"BE1B02F8-5B17B0-19F01",
+    status:"Ordered", lastUpdate:"2026-04-19", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-5C42D9-BBFCF", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - White (100-Pack) x4", qty:4, total:42.76, orderNum:"BE1B02F8-5C42D9-BBFCF",
+    status:"Ordered", lastUpdate:"2026-04-19", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-72C8C1-B010D", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Japanese Size Perfect Fit Inner Sleeves x3", qty:3, total:18.57, orderNum:"BE1B02F8-72C8C1-B010D",
+    status:"Ordered", lastUpdate:"2026-04-20", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-C03189-A1C43", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - Blue (100-Pack) x1", qty:1, total:9.99, orderNum:"BE1B02F8-C03189-A1C43",
+    status:"Ordered", lastUpdate:"2026-04-20", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-06E84C-44278", retailer:"TCGplayer (Sale)",
+    item:"Mega Evolution Booster Bundle x1", qty:1, total:291.99, orderNum:"BE1B02F8-06E84C-44278",
+    status:"Ordered", lastUpdate:"2026-04-20", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-0A66DD-0B8C3", retailer:"TCGplayer (Sale)",
+    item:"Prismatic Evolutions Surprise Box x1", qty:1, total:64.99, orderNum:"BE1B02F8-0A66DD-0B8C3",
+    status:"Ordered", lastUpdate:"2026-04-21", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-1926FA-C26EB", retailer:"TCGplayer (Sale)",
+    item:"Prismatic Evolutions Surprise Box x1", qty:1, total:64.99, orderNum:"BE1B02F8-1926FA-C26EB",
+    status:"Ordered", lastUpdate:"2026-04-21", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-385197-5339E", retailer:"TCGplayer (Sale)",
+    item:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection x1", qty:1, total:217.95, orderNum:"BE1B02F8-385197-5339E",
+    status:"Ordered", lastUpdate:"2026-04-21", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-4CE067-8BAB7", retailer:"TCGplayer (Sale)",
+    item:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection x1", qty:1, total:217.95, orderNum:"BE1B02F8-4CE067-8BAB7",
+    status:"Ordered", lastUpdate:"2026-04-21", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-CEE1BC-450A4", retailer:"TCGplayer (Sale)",
+    item:"Paldean Fates Great Tusk ex & Iron Treads ex Premium Collection x1", qty:1, total:217.95, orderNum:"BE1B02F8-CEE1BC-450A4",
+    status:"Ordered", lastUpdate:"2026-04-22", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-B5DC0B-F0726", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - Purple (100-Pack) x4", qty:4, total:43.96, orderNum:"BE1B02F8-B5DC0B-F0726",
+    status:"Ordered", lastUpdate:"2026-04-21", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" }
+
 ];
 /* --- SCRAPED_END --- */
 
@@ -274,8 +1867,86 @@ const STORAGE_KEY = "ordersDashboard.edits.v1";
 // Seeded by the daily refresh from order_edits.json (if present on disk).
 // Used only when this browser's localStorage is empty.
 /* --- SEED_START --- */
-const SEED_EDITS = { overrides:{}, additions:[], deletions:[] };
+const SEED_EDITS = {
+  "overrides": {
+    "theboxery-617957": {
+      "retailer": "The Boxery",
+      "orderNum": "617957",
+      "item": "Glenwood Packaging materials",
+      "qty": null,
+      "total": null,
+      "status": "Delivered",
+      "lastUpdate": "2026-04-13",
+      "eta": "",
+      "carrier": "",
+      "tracking": "",
+      "trackingUrl": "",
+      "shipTo": "",
+      "notes": "Apr 2026 Glenwood Packaging; shipped Apr 13; no delivery confirmation"
+    },
+    "fedex-870425132207": {
+      "retailer": "FedEx shipment (unknown sender)",
+      "orderNum": "",
+      "item": "Package via FedEx",
+      "qty": null,
+      "total": null,
+      "status": "Delivered",
+      "lastUpdate": "2026-04-08",
+      "eta": "",
+      "carrier": "FedEx",
+      "tracking": "870425132207",
+      "trackingUrl": "https://www.fedex.com/fedextrack/?trknbr=870425132207",
+      "shipTo": "",
+      "notes": "FedEx received package Apr 8; delivery date TBD at time of email; likely delivered"
+    },
+    "theboxery-613322": {
+      "retailer": "The Boxery",
+      "orderNum": "613322",
+      "item": "Packaging materials (Mar 2026 Order 2)",
+      "qty": null,
+      "total": null,
+      "status": "Delivered",
+      "lastUpdate": "2026-03-30",
+      "eta": "",
+      "carrier": "",
+      "tracking": "",
+      "trackingUrl": "",
+      "shipTo": "",
+      "notes": "Shipped Mar 30; no delivery confirmation; likely delivered"
+    },
+    "theboxery-613026": {
+      "retailer": "The Boxery",
+      "orderNum": "613026",
+      "item": "Packaging materials (Mar 2026 SoCal)",
+      "qty": null,
+      "total": null,
+      "status": "Delivered",
+      "lastUpdate": "2026-03-27",
+      "eta": "",
+      "carrier": "",
+      "tracking": "",
+      "trackingUrl": "",
+      "shipTo": "",
+      "notes": "Shipped Mar 27; no delivery confirmation; likely delivered"
+    }
+  },
+  "additions": [],
+  "deletions": [
+    "tcgplayer-jirachi-xy67a",
+    "tcgplayer-2026-04-24-first-partner-illustration",
+    "la28-391117188",
+    "la28-391117453",
+    "ring-011-10490988",
+    "usps-9341920111411216501947",
+    "usps-9400140109627774729627",
+    "walmart-darrenustaris-2026-04-crystal-geyser",
+    "pokesignals-2026-04-09",
+    "pokemoncenter-2026-04-13",
+    "walmart-2000147-82903687"
+  ]
+};
 /* --- SEED_END --- */
+
 const EDITS = loadEdits();
 
 function loadEdits(){
@@ -293,10 +1964,11 @@ function loadEdits(){
 function saveEdits(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(EDITS)); }
 
 function applyEdits(){
-  // 1. drop deletions; 2. apply overrides; 3. append additions
+  // 1. drop deletions; 2. drop outgoing sales; 3. apply overrides; 4. append additions
   const deleted = new Set(EDITS.deletions);
   const scraped = SCRAPED
     .filter(o => !deleted.has(o.id))
+    .filter(o => !/\bsale\b/i.test(o.retailer||''))
     .map(o => {
       const ov = EDITS.overrides[o.id];
       if(!ov) return { ...o, _edited:false, _custom:false };
@@ -311,6 +1983,7 @@ function applyEdits(){
    ======================================================================= */
 let state = { filter:'all', q:'', retailer:'', account:'', sortKey:'lastUpdate', sortDir:-1 };
 const tbody = document.getElementById('tbody');
+const cardList = document.getElementById('cardList');
 const q = document.getElementById('q');
 const retailerSel = document.getElementById('retailer');
 const accountSel = document.getElementById('accountSel');
@@ -338,12 +2011,13 @@ let editingId = null; // if set, editing an existing scraped or custom order
 let editingIsCustom = false;
 
 function counts(list){
-  const c = { all: list.length, Ordered:0, 'In Transit':0, Delivered:0 };
-  for (const o of list) c[o.status]++;
+  const c = { all: list.length, Ordered:0, 'In Transit':0, Delivered:0, Cancelled:0 };
+  for (const o of list) { if(c[o.status]!==undefined) c[o.status]++; }
   document.getElementById('c-total').textContent = c.all;
   document.getElementById('c-ordered').textContent = c.Ordered;
   document.getElementById('c-transit').textContent = c['In Transit'];
   document.getElementById('c-delivered').textContent = c.Delivered;
+  document.getElementById('c-cancelled').textContent = c.Cancelled;
 }
 
 function fillRetailers(list){
@@ -369,7 +2043,7 @@ function fillAccounts(list){
 }
 
 function statusPill(s, o){
-  const map = { 'Ordered':'ordered', 'In Transit':'transit', 'Delivered':'delivered' };
+  const map = { 'Ordered':'ordered', 'In Transit':'transit', 'Delivered':'delivered', 'Cancelled':'cancelled' };
   let html = `<span class="pill ${map[s]||''}">${s}</span>`;
   if (o.stale) html += ` <span class="pill stale" title="No email update in 7+ days">Stale</span>`;
   if (o._edited) html += ` <span class="pill edited" title="You edited this row">Edited</span>`;
@@ -436,6 +2110,45 @@ function render(){
   tbody.querySelectorAll('button[data-edit]').forEach(b =>
     b.addEventListener('click', () => openEdit(b.getAttribute('data-edit'))));
   tbody.querySelectorAll('button[data-del]').forEach(b =>
+    b.addEventListener('click', () => deleteRow(b.getAttribute('data-del'), b.getAttribute('data-custom')==='1')));
+
+  // ── Mobile card list ─────────────────────────────────
+  cardList.innerHTML = '';
+  if (!rows.length) {
+    cardList.innerHTML = '<div class="empty">No orders match.</div>';
+  } else {
+    for (const o of rows) {
+      const div = document.createElement('div');
+      div.className = 'oc';
+      const metaItems = [];
+      if (o.eta) metaItems.push(`<span class="kv"><b>ETA</b> ${esc(o.eta)}</span>`);
+      if (o.lastUpdate) metaItems.push(`<span class="kv"><b>Updated</b> ${esc(o.lastUpdate)}</span>`);
+      if (o.orderNum) metaItems.push(`<span class="kv"><b>Order #</b> ${esc(o.orderNum)}</span>`);
+      if (o.tracking) {
+        const trkHtml = o.trackingUrl
+          ? `<a href="${esc(o.trackingUrl)}" target="_blank" rel="noopener" class="mono">${esc(o.carrier||o.tracking)}</a>`
+          : `<span class="mono">${esc(o.carrier||o.tracking)}</span>`;
+        metaItems.push(`<span class="kv"><b>Tracking</b> ${trkHtml}</span>`);
+      }
+      div.innerHTML = `
+        <div class="oc-head">
+          <div class="oc-retailer">${esc(o.retailer)||'—'}</div>
+          <div class="oc-pills">${statusPill(o.status, o)}</div>
+        </div>
+        <div class="oc-item">${esc(o.item)||'—'}</div>
+        ${metaItems.length ? `<div class="oc-meta">${metaItems.join('')}</div>` : ''}
+        ${o.notes ? `<div class="oc-notes">${esc(o.notes)}</div>` : ''}
+        <div class="oc-actions">
+          <button data-edit="${esc(o.id)}" title="Edit">✎ Edit</button>
+          <button data-del="${esc(o.id)}" data-custom="${o._custom?1:0}" class="danger" title="Delete">🗑</button>
+        </div>
+      `;
+      cardList.appendChild(div);
+    }
+  }
+  cardList.querySelectorAll('button[data-edit]').forEach(b =>
+    b.addEventListener('click', () => openEdit(b.getAttribute('data-edit'))));
+  cardList.querySelectorAll('button[data-del]').forEach(b =>
     b.addEventListener('click', () => deleteRow(b.getAttribute('data-del'), b.getAttribute('data-custom')==='1')));
 }
 
