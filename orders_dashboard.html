@@ -1575,11 +1575,11 @@ const SCRAPED = [
 
   { id:"goldriverdistributors-9236", retailer:"Gold River Distributors",
     item:"Pokémon S&V Prismatic Evolution Premium Collection ×12",
-    qty:12, total:3463.02, orderNum:"9236", status:"In Transit", lastUpdate:"2026-04-29", eta:"2026-04-30",
+    qty:12, total:3463.02, orderNum:"9236", status:"In Transit", lastUpdate:"2026-04-30", eta:"2026-04-30",
     tracking:"1Z5X74750343746748", carrier:"UPS",
     trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750343746748",
     stale:false, shipTo:"Thomas Lau\n1311 Glenwood Ave\nSan Jose, CA 95125",
-    notes:"Order #9236; $3,420.00 + shipping/tax = $3,463.02; 2 UPS packages (second tracking TBD); confirmed & paid Apr 29; ETA Apr 30", source:"wdcardshop@gmail.com" },
+    notes:"Order #9236; $3,420.00 + shipping/tax = $3,463.02; 2 UPS packages (second tracking TBD); confirmed & paid Apr 29; ETA Apr 30 (UPS: 2-6 PM)", source:"wdcardshop@gmail.com" },
 
   { id:"pokemoncenter-P0036034445", retailer:"Pokémon Center",
     item:"Pokémon TCG: Mega Evolution-Ascended Heroes Tech Sticker Collection (Charmander) ×1",
@@ -1852,7 +1852,19 @@ const SCRAPED = [
   { id:"tcgplayer-BE1B02F8-B5DC0B-F0726", retailer:"TCGplayer (Sale)",
     item:"Dragon Shield Matte Sleeves - Purple (100-Pack) x4", qty:4, total:43.96, orderNum:"BE1B02F8-B5DC0B-F0726",
     status:"Ordered", lastUpdate:"2026-04-21", eta:"", tracking:"", carrier:"", trackingUrl:"",
-    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" }
+    stale:true, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-04-30 afternoon refresh (new TCGplayer sales) =====
+
+  { id:"tcgplayer-BE1B02F8-8FA754-92B9B", retailer:"TCGplayer (Sale)",
+    item:"Scarlet ex Booster Box ×1", qty:1, total:86.99, orderNum:"BE1B02F8-8FA754-92B9B",
+    status:"Ordered", lastUpdate:"2026-04-30", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-10C428-E7872", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Japanese Size Perfect Fit Inner Sleeves - Clear ×1", qty:1, total:6.59, orderNum:"BE1B02F8-10C428-E7872",
+    status:"Ordered", lastUpdate:"2026-04-30", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" }
 
 ];
 /* --- SCRAPED_END --- */
@@ -1867,84 +1879,7 @@ const STORAGE_KEY = "ordersDashboard.edits.v1";
 // Seeded by the daily refresh from order_edits.json (if present on disk).
 // Used only when this browser's localStorage is empty.
 /* --- SEED_START --- */
-const SEED_EDITS = {
-  "overrides": {
-    "theboxery-617957": {
-      "retailer": "The Boxery",
-      "orderNum": "617957",
-      "item": "Glenwood Packaging materials",
-      "qty": null,
-      "total": null,
-      "status": "Delivered",
-      "lastUpdate": "2026-04-13",
-      "eta": "",
-      "carrier": "",
-      "tracking": "",
-      "trackingUrl": "",
-      "shipTo": "",
-      "notes": "Apr 2026 Glenwood Packaging; shipped Apr 13; no delivery confirmation"
-    },
-    "fedex-870425132207": {
-      "retailer": "FedEx shipment (unknown sender)",
-      "orderNum": "",
-      "item": "Package via FedEx",
-      "qty": null,
-      "total": null,
-      "status": "Delivered",
-      "lastUpdate": "2026-04-08",
-      "eta": "",
-      "carrier": "FedEx",
-      "tracking": "870425132207",
-      "trackingUrl": "https://www.fedex.com/fedextrack/?trknbr=870425132207",
-      "shipTo": "",
-      "notes": "FedEx received package Apr 8; delivery date TBD at time of email; likely delivered"
-    },
-    "theboxery-613322": {
-      "retailer": "The Boxery",
-      "orderNum": "613322",
-      "item": "Packaging materials (Mar 2026 Order 2)",
-      "qty": null,
-      "total": null,
-      "status": "Delivered",
-      "lastUpdate": "2026-03-30",
-      "eta": "",
-      "carrier": "",
-      "tracking": "",
-      "trackingUrl": "",
-      "shipTo": "",
-      "notes": "Shipped Mar 30; no delivery confirmation; likely delivered"
-    },
-    "theboxery-613026": {
-      "retailer": "The Boxery",
-      "orderNum": "613026",
-      "item": "Packaging materials (Mar 2026 SoCal)",
-      "qty": null,
-      "total": null,
-      "status": "Delivered",
-      "lastUpdate": "2026-03-27",
-      "eta": "",
-      "carrier": "",
-      "tracking": "",
-      "trackingUrl": "",
-      "shipTo": "",
-      "notes": "Shipped Mar 27; no delivery confirmation; likely delivered"
-    }
-  },
-  "additions": [],
-  "deletions": [
-    "tcgplayer-jirachi-xy67a",
-    "tcgplayer-2026-04-24-first-partner-illustration",
-    "la28-391117188",
-    "la28-391117453",
-    "ring-011-10490988",
-    "usps-9341920111411216501947",
-    "usps-9400140109627774729627",
-    "walmart-darrenustaris-2026-04-crystal-geyser",
-    "pokesignals-2026-04-09",
-    "pokemoncenter-2026-04-13",
-    "walmart-2000147-82903687"
-  ]
-};
+const SEED_EDITS = {"overrides":{"theboxery-617957":{"retailer":"The Boxery","orderNum":"617957","item":"Glenwood Packaging materials","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-04-13","eta":"","carrier":"","tracking":"","trackingUrl":"","shipTo":"","notes":"Apr 2026 Glenwood Packaging; shipped Apr 13; no delivery confirmation"},"fedex-870425132207":{"retailer":"FedEx shipment (unknown sender)","orderNum":"","item":"Package via FedEx","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-04-08","eta":"","carrier":"FedEx","tracking":"870425132207","trackingUrl":"https://www.fedex.com/fedextrack/?trknbr=870425132207","shipTo":"","notes":"FedEx received package Apr 8; delivery date TBD at time of email; likely delivered"},"theboxery-613322":{"retailer":"The Boxery","orderNum":"613322","item":"Packaging materials (Mar 2026 Order 2)","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-03-30","eta":"","carrier":"","tracking":"","trackingUrl":"","shipTo":"","notes":"Shipped Mar 30; no delivery confirmation; likely delivered"},"theboxery-613026":{"retailer":"The Boxery","orderNum":"613026","item":"Packaging materials (Mar 2026 SoCal)","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-03-27","eta":"","carrier":"","tracking":"","trackingUrl":"","shipTo":"","notes":"Shipped Mar 27; no delivery confirmation; likely delivered"}},"additions":[],"deletions":["tcgplayer-jirachi-xy67a","tcgplayer-2026-04-24-first-partner-illustration","la28-391117188","la28-391117453","ring-011-10490988","usps-9341920111411216501947","usps-9400140109627774729627","walmart-darrenustaris-2026-04-crystal-geyser","pokesignals-2026-04-09","pokemoncenter-2026-04-13","walmart-2000147-82903687"]};
 /* --- SEED_END --- */
 
 const EDITS = loadEdits();
