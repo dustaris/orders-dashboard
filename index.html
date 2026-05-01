@@ -108,7 +108,7 @@
 <body>
 <header>
   <div>
-    <div class="meta">Snapshot: <span id="snapshot">2026-04-30</span> · Source: <span id="accountList">wdcardshop</span> (last 32 days)</div>
+    <div class="meta">Snapshot: <span id="snapshot">2026-05-01</span> · Source: <span id="accountList">wdcardshop</span> (last 32 days)</div>
   </div>
 </header>
 
@@ -1575,11 +1575,11 @@ const SCRAPED = [
 
   { id:"goldriverdistributors-9236", retailer:"Gold River Distributors",
     item:"Pokémon S&V Prismatic Evolution Premium Collection ×12",
-    qty:12, total:3463.02, orderNum:"9236", status:"In Transit", lastUpdate:"2026-04-30", eta:"2026-04-30",
+    qty:12, total:3463.02, orderNum:"9236", status:"Delivered", lastUpdate:"2026-04-30", eta:"2026-04-30",
     tracking:"1Z5X74750343746748", carrier:"UPS",
     trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750343746748",
     stale:false, shipTo:"Thomas Lau\n1311 Glenwood Ave\nSan Jose, CA 95125",
-    notes:"Order #9236; $3,420.00 + shipping/tax = $3,463.02; 2 UPS packages (second tracking TBD); confirmed & paid Apr 29; ETA Apr 30 (UPS: 2-6 PM)", source:"wdcardshop@gmail.com" },
+    notes:"Order #9236; $3,420.00 + shipping/tax = $3,463.02; confirmed & paid Apr 29; delivered Apr 30 at 6:06 PM (UPS from Gold River Distributors)", source:"wdcardshop@gmail.com" },
 
   { id:"pokemoncenter-P0036034445", retailer:"Pokémon Center",
     item:"Pokémon TCG: Mega Evolution-Ascended Heroes Tech Sticker Collection (Charmander) ×1",
@@ -1893,7 +1893,27 @@ const SCRAPED = [
   { id:"tcgplayer-BE1B02F8-E4E3D4-96761", retailer:"TCGplayer (Sale)",
     item:"Dragon Shield Matte Sleeves - Gold (100-Pack) ×2", qty:2, total:19.38, orderNum:"BE1B02F8-E4E3D4-96761",
     status:"Ordered", lastUpdate:"2026-04-30", eta:"", tracking:"", carrier:"", trackingUrl:"",
-    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" }
+    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-05-01 refresh =====
+
+  { id:"shopify-1237", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Perfect Order Elite Trainer Box ×3",
+    qty:3, total:206.97, orderNum:"1237", status:"Ordered", lastUpdate:"2026-04-30", eta:"",
+    tracking:"", carrier:"",
+    trackingUrl:"",
+    stale:false, shipTo:"Alex Penaloza",
+    notes:"Shopify order #1237; Alex Penaloza; $206.97; placed Apr 30 at 6:07 PM; free shipping (FREESHIP); ship to buyer", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-04-30 refresh (DSG) =====
+
+  { id:"dsg-40074056729", retailer:"Dick's Sporting Goods",
+    item:"Pokémon TCG: Ascended Heroes Booster Bundle ×1",
+    qty:1, total:35.00, orderNum:"40074056729", status:"In Transit", lastUpdate:"2026-04-29", eta:"",
+    tracking:"", carrier:"FedEx",
+    trackingUrl:"",
+    stale:false, shipTo:"Darren Ustaris\n21995 Bellcroft Drive\nLake Forest, CA 92630",
+    notes:"Order #40074056729; ordered Apr 28; shipped Apr 29 via FedEx; tracking # in DSG account; $35.00; darrenustaris account", source:"darrenustaris@gmail.com" }
 
 ];
 /* --- SCRAPED_END --- */
