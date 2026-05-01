@@ -222,20 +222,20 @@ const SCRAPED = [
     notes:"ACD order summary (cust #83685) dated 4-27-2026; $1095.60; 5 packages shipped Apr 28; delivered Apr 29 3:25 PM (ACD DISTRIBUTION-WEST via UPS); Thomas approved shipment Apr 26; free shipping", source:"wdcardshop@gmail.com" },
 
   { id:"acd-2026-04-24", retailer:"ACD Distribution",
-    item:"ACD Distribution order (awaiting shipment)",
-    qty:null, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-24", eta:"",
-    tracking:"", carrier:"",
+    item:"ACD Distribution order (supplies)",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-29", eta:"2026-04-29",
+    tracking:"", carrier:"UPS",
     trackingUrl:"",
     stale:false, shipTo:"",
-    notes:"Order confirmed Apr 24; tracking to follow", source:"wdcardshop@gmail.com" },
+    notes:"Order confirmed Apr 24; included in Apr 26-27 ACD shipment (back order); delivered Apr 29 with ACD DISTRIBUTION-WEST packages", source:"wdcardshop@gmail.com" },
 
   { id:"acd-2026-04-19", retailer:"ACD Distribution",
-    item:"ACD Distribution order (awaiting shipment)",
-    qty:null, total:null, orderNum:"", status:"Ordered", lastUpdate:"2026-04-19", eta:"",
-    tracking:"", carrier:"",
+    item:"ACD Distribution order (supplies)",
+    qty:null, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-29", eta:"2026-04-29",
+    tracking:"", carrier:"UPS",
     trackingUrl:"",
-    stale:true, shipTo:"",
-    notes:"Order placed Apr 19; tracking to follow; no shipment confirmation yet", source:"wdcardshop@gmail.com" },
+    stale:false, shipTo:"",
+    notes:"Order placed Apr 19; included in Apr 26-27 ACD shipment as back order; delivered Apr 29 with ACD DISTRIBUTION-WEST packages", source:"wdcardshop@gmail.com" },
 
   { id:"ups-1ZRW55790396623610", retailer:"ACD Distribution",
     item:"ACD Distribution inventory order",
@@ -1864,7 +1864,46 @@ const SCRAPED = [
   { id:"tcgplayer-BE1B02F8-10C428-E7872", retailer:"TCGplayer (Sale)",
     item:"Dragon Shield Japanese Size Perfect Fit Inner Sleeves - Clear ×1", qty:1, total:6.59, orderNum:"BE1B02F8-10C428-E7872",
     status:"Ordered", lastUpdate:"2026-04-30", eta:"", tracking:"", carrier:"", trackingUrl:"",
-    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" }
+    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-04-30 evening refresh (new TCGplayer sales) =====
+
+  { id:"tcgplayer-BE1B02F8-87BF74-C1E8A", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Japanese Size Matte Clear Outer Sleeves (60-Pack) ×2", qty:2, total:18.78, orderNum:"BE1B02F8-87BF74-C1E8A",
+    status:"Ordered", lastUpdate:"2026-04-30", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-8CD4EE-25C89", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Japanese Size Matte Clear Outer Sleeves (60-Pack) ×2", qty:2, total:18.78, orderNum:"BE1B02F8-8CD4EE-25C89",
+    status:"Ordered", lastUpdate:"2026-04-30", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-04-30 late refresh (new TCGplayer sales) =====
+
+  { id:"tcgplayer-BE1B02F8-798CC1-248C8", retailer:"TCGplayer (Sale)",
+    item:"Perfect Order 3 Pack Blister [Chikorita] ×2", qty:2, total:42.28, orderNum:"BE1B02F8-798CC1-248C8",
+    status:"Ordered", lastUpdate:"2026-04-30", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-0C9353-1C74B", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - White (100-Pack) ×1", qty:1, total:10.69, orderNum:"BE1B02F8-0C9353-1C74B",
+    status:"Ordered", lastUpdate:"2026-04-30", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-E4E3D4-96761", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - Gold (100-Pack) ×2", qty:2, total:19.38, orderNum:"BE1B02F8-E4E3D4-96761",
+    status:"Ordered", lastUpdate:"2026-04-30", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-04-30 refresh (DSG) =====
+
+  { id:"dsg-40074056729", retailer:"Dick's Sporting Goods",
+    item:"Pokémon TCG: Ascended Heroes Booster Bundle ×1",
+    qty:1, total:35.00, orderNum:"40074056729", status:"In Transit", lastUpdate:"2026-04-29", eta:"",
+    tracking:"", carrier:"FedEx",
+    trackingUrl:"",
+    stale:false, shipTo:"Darren Ustaris\n21995 Bellcroft Drive\nLake Forest, CA 92630",
+    notes:"Order #40074056729; ordered Apr 28; shipped Apr 29 via FedEx; tracking # in DSG account; $35.00; darrenustaris account", source:"darrenustaris@gmail.com" }
 
 ];
 /* --- SCRAPED_END --- */
