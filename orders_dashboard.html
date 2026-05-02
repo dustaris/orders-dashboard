@@ -108,7 +108,7 @@
 <body>
 <header>
   <div>
-    <div class="meta">Snapshot: <span id="snapshot">2026-05-01</span> · Source: <span id="accountList">wdcardshop</span> (last 32 days)</div>
+    <div class="meta">Snapshot: <span id="snapshot">2026-05-02 07:05</span> · Source: <span id="accountList">wdcardshop</span> (last 32 days)</div>
   </div>
 </header>
 
@@ -211,6 +211,9 @@
    ======================================================================= */
 /* --- SCRAPED_START --- */
 const SCRAPED = [
+  { id:"tcgplayer-BE1B02F8-957271-8FBE5", retailer:"TCGplayer (Sale)", item:"Scarlet ex Booster Box", qty:1, total:86.99, orderNum:"BE1B02F8-957271-8FBE5", status:"Ordered", lastUpdate:"2026-05-02", eta:"", tracking:"", carrier:"", trackingUrl:"", shipTo:"", stale:false, notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+  { id:"ups-1Z5X74750343746748", retailer:"Gold River Distributors", item:"Pokemon inventory (Gold River shipment)", qty:1, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-30", eta:"2026-04-30", tracking:"1Z5X74750343746748", carrier:"UPS", trackingUrl:"https://www.ups.com/track?tracknum=1Z5X74750343746748", shipTo:"WD CARD SHOP, 1311 GLENWOOD AVE, SAN JOSE CA 95125", stale:false, notes:"Delivered Thu 04/30/2026 6:06 PM per UPS update", source:"wdcardshop@gmail.com" },
+
   // ===== WDCARDSHOP — INBOUND INVENTORY ORDERS =====
 
   { id:"acd-2026-04-26-supplies", retailer:"ACD Distribution",
@@ -724,12 +727,12 @@ const SCRAPED = [
   // ===== wdcardshop3 — Walmart orders =====
 
   { id:"walmart-wdcardshop3-2026-03-31-tcg", retailer:"Walmart",
-    item:"Pokemon Trading Card Game + 4 other items",
-    qty:5, total:null, orderNum:"", status:"Delivered", lastUpdate:"2026-04-06", eta:"2026-04-06",
-    tracking:"", carrier:"Walmart",
-    trackingUrl:"",
+    item:"Pokemon Trading Card Games Mega Evolutions 3 Perfect Order ×5",
+    qty:5, total:null, orderNum:"2000143-01014491", status:"Delivered", lastUpdate:"2026-04-06", eta:"2026-04-06",
+    tracking:"380098452014", carrier:"FedEx",
+    trackingUrl:"https://www.fedex.com/fedextrack/?trknbr=380098452014",
     stale:false, shipTo:"",
-    notes:"Ordered Mar 31; ETA Apr 6; delivered; card shop inventory", source:"wdcardshop3@gmail.com" },
+    notes:"Order #2000143-01014491; ordered Mar 31; ETA Apr 6; delivered via FedEx (380098452014); card shop inventory; wdcardshop3 account", source:"wdcardshop3@gmail.com" },
 
   { id:"walmart-wdcardshop3-2026-04-05-tcg-a", retailer:"Walmart",
     item:"Pokemon Trading Card Game + 4 other items",
@@ -1980,8 +1983,8 @@ const SCRAPED = [
   { id:"ebay-2026-05-01-rob-lucci-op07", retailer:"eBay (Sale)",
     item:"2024 ONE PIECE 500 Years in the Future Rob Lucci OP07-079 (L) Leader",
     qty:1, total:null, orderNum:"",
-    status:"Ordered", lastUpdate:"2026-05-01", eta:"", tracking:"", carrier:"", trackingUrl:"",
-    stale:false, shipTo:"", notes:"eBay sale — ship to buyer", source:"wdcardshop@gmail.com" },
+    status:"In Transit", lastUpdate:"2026-05-01", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"", notes:"eBay sale — shipping label ready May 1; ship to buyer", source:"wdcardshop@gmail.com" },
 
   // ===== 2026-05-01 late refresh =====
 
@@ -1996,7 +1999,54 @@ const SCRAPED = [
     qty:null, total:null, orderNum:"",
     status:"Ordered", lastUpdate:"2026-05-01", eta:"", tracking:"", carrier:"", trackingUrl:"",
     stale:false, shipTo:"",
-    notes:"ACD Distribution order confirmation received May 1 at 8:30 PM (from support@acdd.com); tracking number to follow", source:"wdcardshop@gmail.com" }
+    notes:"ACD Distribution order confirmation received May 1 at 8:30 PM (from support@acdd.com); tracking number to follow", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-05-01 final refresh =====
+
+  { id:"goldriverdistributors-9279", retailer:"Gold River Distributors",
+    item:"Pokémon S&V Prismatic Evolution Premium Collection ×12",
+    qty:12, total:3540.00, orderNum:"9279",
+    status:"Ordered", lastUpdate:"2026-05-01", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"Thomas Lau\n1311 Glenwood Ave\nSan Jose, CA 95125",
+    notes:"Order #9279 confirmed May 1 at 5:41 PM; 12× Pokémon S&V Prismatic Evolution Premium Col at $295/unit = $3,540.00; payment & invoice pending; will ship without further contact if all items in stock", source:"wdcardshop@gmail.com" },
+
+  { id:"shopify-1239", retailer:"WD Card Shop (Shopify Sale)",
+    item:"Ascended Heroes First Partners Deluxe Pin Collection ×5",
+    qty:5, total:274.95, orderNum:"1239",
+    status:"Ordered", lastUpdate:"2026-05-01", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"Jeff Gossman",
+    notes:"Shopify order #1239; Jeff Gossman; placed May 1 at 2:28 PM; $279.95 - $5.00 EEVEE5 discount = $274.95 subtotal + shipping; ship to buyer", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-05-01 night refresh =====
+
+  { id:"tcgplayer-BE1B02F8-A233F2-A6E2C", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield - Perfect Fit Thick Inner Sleeves (Clear) ×2",
+    qty:2, total:16.78, orderNum:"BE1B02F8-A233F2-A6E2C",
+    status:"Ordered", lastUpdate:"2026-05-01", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-05-02 early morning refresh =====
+
+  { id:"tcgplayer-BE1B02F8-F9AB98-F39FE", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - Black (100-Pack) ×2",
+    qty:2, total:21.78, orderNum:"BE1B02F8-F9AB98-F39FE",
+    status:"Ordered", lastUpdate:"2026-05-02", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  { id:"tcgplayer-BE1B02F8-6C7447-70D41", retailer:"TCGplayer (Sale)",
+    item:"Dragon Shield Matte Sleeves - Black (100-Pack) ×1",
+    qty:1, total:10.89, orderNum:"BE1B02F8-6C7447-70D41",
+    status:"Ordered", lastUpdate:"2026-05-02", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"", notes:"TCGplayer sale — ship to buyer; payment held until buyer confirms delivery", source:"wdcardshop@gmail.com" },
+
+  // ===== 2026-05-02 morning refresh =====
+
+  { id:"acd-2026-05-02", retailer:"ACD Distribution",
+    item:"ACD Distribution order",
+    qty:null, total:null, orderNum:"",
+    status:"Ordered", lastUpdate:"2026-05-02", eta:"", tracking:"", carrier:"", trackingUrl:"",
+    stale:false, shipTo:"",
+    notes:"ACD Distribution order confirmation received May 2 at 7:34 AM (from support@acdd.com); tracking number to follow", source:"wdcardshop@gmail.com" }
 
 ];
 /* --- SCRAPED_END --- */
@@ -2012,6 +2062,7 @@ const STORAGE_KEY = "ordersDashboard.edits.v1";
 // Used only when this browser's localStorage is empty.
 /* --- SEED_START --- */
 const SEED_EDITS = {"overrides":{"theboxery-617957":{"retailer":"The Boxery","orderNum":"617957","item":"Glenwood Packaging materials","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-04-13","eta":"","carrier":"","tracking":"","trackingUrl":"","shipTo":"","notes":"Apr 2026 Glenwood Packaging; shipped Apr 13; no delivery confirmation"},"fedex-870425132207":{"retailer":"FedEx shipment (unknown sender)","orderNum":"","item":"Package via FedEx","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-04-08","eta":"","carrier":"FedEx","tracking":"870425132207","trackingUrl":"https://www.fedex.com/fedextrack/?trknbr=870425132207","shipTo":"","notes":"FedEx received package Apr 8; delivery date TBD at time of email; likely delivered"},"theboxery-613322":{"retailer":"The Boxery","orderNum":"613322","item":"Packaging materials (Mar 2026 Order 2)","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-03-30","eta":"","carrier":"","tracking":"","trackingUrl":"","shipTo":"","notes":"Shipped Mar 30; no delivery confirmation; likely delivered"},"theboxery-613026":{"retailer":"The Boxery","orderNum":"613026","item":"Packaging materials (Mar 2026 SoCal)","qty":null,"total":null,"status":"Delivered","lastUpdate":"2026-03-27","eta":"","carrier":"","tracking":"","trackingUrl":"","shipTo":"","notes":"Shipped Mar 27; no delivery confirmation; likely delivered"}},"additions":[],"deletions":["tcgplayer-jirachi-xy67a","tcgplayer-2026-04-24-first-partner-illustration","la28-391117188","la28-391117453","ring-011-10490988","usps-9341920111411216501947","usps-9400140109627774729627","walmart-darrenustaris-2026-04-crystal-geyser","pokesignals-2026-04-09","pokemoncenter-2026-04-13","walmart-2000147-82903687"]};
+
 /* --- SEED_END --- */
 
 const EDITS = loadEdits();
