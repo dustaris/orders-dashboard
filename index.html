@@ -2339,7 +2339,7 @@ function applyEdits(){
   const deleted = new Set(EDITS.deletions);
   const scraped = SCRAPED
     .filter(o => !deleted.has(o.id))
-    .filter(o => !/\bsale\b/i.test(o.retailer||''))
+    .filter(o => !/\bsale\b/i.test(o.retailer||'') && !/\(shopify/i.test(o.retailer||''))
     .map(o => {
       const ov = EDITS.overrides[o.id];
       if(!ov) return { ...o, _edited:false, _custom:false };
